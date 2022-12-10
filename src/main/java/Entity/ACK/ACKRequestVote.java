@@ -2,16 +2,16 @@ package Entity.ACK;
 
 public class ACKRequestVote {
 
-    private int term;
+    private long term;
 
     private boolean voteGranted;
 
-    public ACKRequestVote(int term, boolean voteGranted) {
+    public ACKRequestVote(long term, boolean voteGranted) {
         this.term = term;
         this.voteGranted = voteGranted;
     }
 
-    public int getTerm() {
+    public long getTerm() {
         return term;
     }
 

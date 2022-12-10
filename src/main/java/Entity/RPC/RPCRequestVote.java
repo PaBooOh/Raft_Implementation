@@ -2,20 +2,20 @@ package Entity.RPC;
 
 public class RPCRequestVote {
 
-    private int term;
+    private long candidateTerm;
     private int candidateId;
     private int lastLogIndex;
     private int lastLogTerm;
 
-    public RPCRequestVote(int candidateId, int term, int lastLogIndex, int lastLogTerm) {
-        this.term = term;
+    public RPCRequestVote(int candidateTerm, int candidateId, int lastLogIndex, int lastLogTerm) {
+        this.candidateTerm = candidateTerm;
         this.candidateId = candidateId;
         this.lastLogIndex = lastLogIndex;
         this.lastLogTerm = lastLogTerm;
     }
 
-    public int getTerm() {
-        return term;
+    public long getCandidateTerm() {
+        return candidateTerm;
     }
 
     public int getCandidateId() {
@@ -30,8 +30,8 @@ public class RPCRequestVote {
         return lastLogTerm;
     }
 
-    public void setTerm(int term) {
-        this.term = term;
+    public void setCandidateTerm(int candidateTerm) {
+        this.candidateTerm = candidateTerm;
     }
 
     public void setCandidateId(int candidateId) {

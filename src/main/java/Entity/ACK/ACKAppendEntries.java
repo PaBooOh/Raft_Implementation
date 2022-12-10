@@ -4,26 +4,26 @@ public class ACKAppendEntries {
 
     private int term;
 
-    private boolean success;
+    private boolean ack;
 
-    public ACKAppendEntries(int term, boolean success) {
+    public ACKAppendEntries(int term, boolean ack) {
         this.term = term;
-        this.success = success;
+        this.ack = ack;
     }
 
     public int getTerm() {
         return term;
     }
 
-    public boolean isSuccess() {
-        return success;
+    public boolean isAck() {
+        return ack;
     }
 
     public void setTerm(int term) {
         this.term = term;
     }
 
-    public void setSuccess(boolean success) {
-        this.success = success;
+    public void setAck(boolean ack) {
+        this.ack = ack;
     }
 }

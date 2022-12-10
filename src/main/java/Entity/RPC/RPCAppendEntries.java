@@ -2,13 +2,15 @@ package Entity.RPC;
 
 import Entity.LogEntry;
 
+import java.util.List;
+
 public class RPCAppendEntries {
 
     private int term;
     private int leaderId;
     private int prevLogIndex;
     private int prevLogTerm;
-    private LogEntry[] logEntries;
+    private List<LogEntry> logEntries;
     private int commitIndex;
 
     public int getTerm() {
@@ -27,7 +29,7 @@ public class RPCAppendEntries {
         return prevLogTerm;
     }
 
-    public LogEntry[] getLogEntries() {
+    public List<LogEntry> getLogEntries() {
         return logEntries;
     }
 
@@ -51,7 +53,7 @@ public class RPCAppendEntries {
         this.prevLogTerm = prevLogTerm;
     }
 
-    public void setLogEntries(LogEntry[] logEntries) {
+    public void setLogEntries(List<LogEntry> logEntries) {
         this.logEntries = logEntries;
     }
 
