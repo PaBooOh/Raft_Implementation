@@ -73,6 +73,8 @@ public class RaftServer {
     // Multi-threads is applied to issue multiple requestVote RPCs to other raft nodes.
     private void initiateLeaderElection()
     {
+        System.out.println("'initiateLeaderElection");
+        LOGGER.info("Building cluster >>> Server (ServerId={}, ServerTerm={}) has been started", localServer.getServerId(), getCurrentTerm());
         if (electionScheduledFuture != null && !electionScheduledFuture.isDone()) {
             electionScheduledFuture.cancel(true); // interrupt thread
         }
@@ -89,6 +91,7 @@ public class RaftServer {
     {
         lock.lock();
         try {
+            System.out.println("'requestVote");
             setCurrentTerm(getCurrentTerm() + 1);
             LOGGER.info("Leader Election >>> Candidate (ServerId={}, ServerTerm={}) become candidate and try to canvass ...", localServer.getServerId(), getCurrentTerm());
             setNodeRole(NodeRole.CANDIDATE);
@@ -108,7 +111,6 @@ public class RaftServer {
                 continue;
             executorService.submit(() -> issueRequestVoteRPC(targetServerId, targetServerHost, targetServerPort));
         }
-        initiateLeaderElection();
     }
 
     private void issueRequestVoteRPC(int targetServerId, String targetServerHost, int targetServerPort)
@@ -117,7 +119,7 @@ public class RaftServer {
         RaftRPC.VoteRequest.Builder requestBuilder = RaftRPC.VoteRequest.newBuilder();
         lock.lock();
         try {
-//            peer.setVoteGranted(null);
+            
             requestBuilder.setCandidateId(localServer.getServerId())
                     .setCandidateTerm(getCurrentTerm())
                     .setLastLogIndex(getStateMachine().getLastLogIndex())

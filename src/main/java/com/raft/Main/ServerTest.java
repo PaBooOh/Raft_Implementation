@@ -3,8 +3,10 @@ package com.raft.Main;
 import com.raft.Entity.RaftServer;
 import com.raft.ProtoBuf.RaftRPC;
 import com.raft.RaftRPCService.RaftNodeService;
-import org.slf4j.Logger;
+//import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,7 +15,7 @@ import java.util.List;
 
 public class ServerTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServerTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(ServerTest.class);
 
     public static void main(String[] args) throws IOException {
         if (args.length != 2)
@@ -26,7 +28,7 @@ public class ServerTest {
         // "host1:port1,host2:port2,host3:port3"
         String clusterString = args[0];
         String localServerString = args[1];
-        System.out.print("Building cluster >>> Start a server (Server =" + localServerString + " in cluster=" + clusterString + ")");
+        LOGGER.info("Building cluster >>> Start a server (Server=" + localServerString + " in cluster=" + clusterString + ")");
         String[] serversString = clusterString.split(",");
         RaftRPC.Server localServer = getServer(serversString, localServerString);
 
