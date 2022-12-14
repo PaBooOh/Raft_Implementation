@@ -1,4 +1,4 @@
-package Entity.RPC;
+package com.raft.Entity.RPC;
 
 public class RPCRequestVote {
 

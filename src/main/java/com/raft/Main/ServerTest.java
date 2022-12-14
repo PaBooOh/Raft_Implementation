@@ -1,8 +1,8 @@
-import Entity.RaftServer;
+package com.raft.Main;
 
-import RaftRPCService.RaftNodeService;
-import io.grpc.Server;
-import ProtoBuf.RaftRPC;
+import com.raft.Entity.RaftServer;
+import com.raft.ProtoBuf.RaftRPC;
+import com.raft.RaftRPCService.RaftNodeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class TestServer {
+public class ServerTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerTest.class);
 
     public static void main(String[] args) throws IOException {
         if (args.length != 2)

@@ -1,9 +1,9 @@
-package RaftRPCService;
+package com.raft.RaftRPCService;
 
-import Entity.RaftServer;
-import ProtoBuf.RaftNodeServiceGrpc;
+import com.raft.Entity.RaftServer;
+import com.raft.ProtoBuf.RaftNodeServiceGrpc;
+import com.raft.ProtoBuf.RaftRPC;
 import io.grpc.stub.StreamObserver;
-import ProtoBuf.RaftRPC.*;
 import org.slf4j.*;
 
 public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase {
@@ -14,11 +14,11 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
 
     // Voting
     @Override
-    public void requestVoteRPC(VoteRequest candidateRequest, StreamObserver<VoteReply> responseObserver) {
+    public void requestVoteRPC(RaftRPC.VoteRequest candidateRequest, StreamObserver<RaftRPC.VoteReply> responseObserver) {
         // lock
         receiver.getLock().lock();
         try {
-            VoteReply.Builder responseBuilder = VoteReply.newBuilder();
+            RaftRPC.VoteReply.Builder responseBuilder = RaftRPC.VoteReply.newBuilder();
 
 
             long candidateTerm = candidateRequest.getCandidateTerm();

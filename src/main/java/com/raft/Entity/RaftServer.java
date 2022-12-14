@@ -1,6 +1,7 @@
-package Entity;
+package com.raft.Entity;
 
-import ProtoBuf.RaftNodeServiceGrpc;
+import com.raft.ProtoBuf.RaftNodeServiceGrpc;
+import com.raft.ProtoBuf.RaftRPC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,8 +11,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-
-import ProtoBuf.RaftRPC;
 
 public class RaftServer {
 
@@ -195,6 +194,11 @@ public class RaftServer {
         return randomElectionTimeout;
     }
 
+//    private RaftRPC.AppendEntriesReply appendEntriesRequest(RaftRPC.AppendEntriesRequest)
+//    {
+//
+//    }
+
     public StateMachine getStateMachine() {
         return stateMachine;
     }
@@ -217,6 +221,8 @@ public class RaftServer {
 //        }
         initiateLeaderElection();
     }
+
+
 
     // get lock
     public Lock getLock() {

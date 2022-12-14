@@ -1,18 +1,11 @@
-package ProtoBuf;
+package com.raft.ProtoBuf;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
-import static io.grpc.stub.ClientCalls.asyncBidiStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncClientStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncServerStreamingCall;
 import static io.grpc.stub.ClientCalls.asyncUnaryCall;
 import static io.grpc.stub.ClientCalls.blockingServerStreamingCall;
 import static io.grpc.stub.ClientCalls.blockingUnaryCall;
 import static io.grpc.stub.ClientCalls.futureUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncBidiStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncClientStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncServerStreamingCall;
 import static io.grpc.stub.ServerCalls.asyncUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall;
 import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
 /**
@@ -32,29 +25,29 @@ public final class RaftNodeServiceGrpc {
   // Static method descriptors that strictly reflect the proto.
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
   @java.lang.Deprecated // Use {@link #getRequestVoteRPCMethod()} instead. 
-  public static final io.grpc.MethodDescriptor<ProtoBuf.RaftRPC.VoteRequest,
-      ProtoBuf.RaftRPC.VoteReply> METHOD_REQUEST_VOTE_RPC = getRequestVoteRPCMethod();
+  public static final io.grpc.MethodDescriptor<RaftRPC.VoteRequest,
+          RaftRPC.VoteReply> METHOD_REQUEST_VOTE_RPC = getRequestVoteRPCMethod();
 
-  private static volatile io.grpc.MethodDescriptor<ProtoBuf.RaftRPC.VoteRequest,
-      ProtoBuf.RaftRPC.VoteReply> getRequestVoteRPCMethod;
+  private static volatile io.grpc.MethodDescriptor<RaftRPC.VoteRequest,
+          RaftRPC.VoteReply> getRequestVoteRPCMethod;
 
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
-  public static io.grpc.MethodDescriptor<ProtoBuf.RaftRPC.VoteRequest,
-      ProtoBuf.RaftRPC.VoteReply> getRequestVoteRPCMethod() {
-    io.grpc.MethodDescriptor<ProtoBuf.RaftRPC.VoteRequest, ProtoBuf.RaftRPC.VoteReply> getRequestVoteRPCMethod;
+  public static io.grpc.MethodDescriptor<RaftRPC.VoteRequest,
+          RaftRPC.VoteReply> getRequestVoteRPCMethod() {
+    io.grpc.MethodDescriptor<RaftRPC.VoteRequest, RaftRPC.VoteReply> getRequestVoteRPCMethod;
     if ((getRequestVoteRPCMethod = RaftNodeServiceGrpc.getRequestVoteRPCMethod) == null) {
       synchronized (RaftNodeServiceGrpc.class) {
         if ((getRequestVoteRPCMethod = RaftNodeServiceGrpc.getRequestVoteRPCMethod) == null) {
           RaftNodeServiceGrpc.getRequestVoteRPCMethod = getRequestVoteRPCMethod = 
-              io.grpc.MethodDescriptor.<ProtoBuf.RaftRPC.VoteRequest, ProtoBuf.RaftRPC.VoteReply>newBuilder()
+              io.grpc.MethodDescriptor.<RaftRPC.VoteRequest, RaftRPC.VoteReply>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
                   "raft.RaftNodeService", "RequestVoteRPC"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  ProtoBuf.RaftRPC.VoteRequest.getDefaultInstance()))
+                  RaftRPC.VoteRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  ProtoBuf.RaftRPC.VoteReply.getDefaultInstance()))
+                  RaftRPC.VoteReply.getDefaultInstance()))
                   .setSchemaDescriptor(new RaftNodeServiceMethodDescriptorSupplier("RequestVoteRPC"))
                   .build();
           }
@@ -64,29 +57,29 @@ public final class RaftNodeServiceGrpc {
   }
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
   @java.lang.Deprecated // Use {@link #getAppendEntriesRPCMethod()} instead. 
-  public static final io.grpc.MethodDescriptor<ProtoBuf.RaftRPC.AppendEntriesRequest,
-      ProtoBuf.RaftRPC.AppendEntriesReply> METHOD_APPEND_ENTRIES_RPC = getAppendEntriesRPCMethod();
+  public static final io.grpc.MethodDescriptor<RaftRPC.AppendEntriesRequest,
+          RaftRPC.AppendEntriesReply> METHOD_APPEND_ENTRIES_RPC = getAppendEntriesRPCMethod();
 
-  private static volatile io.grpc.MethodDescriptor<ProtoBuf.RaftRPC.AppendEntriesRequest,
-      ProtoBuf.RaftRPC.AppendEntriesReply> getAppendEntriesRPCMethod;
+  private static volatile io.grpc.MethodDescriptor<RaftRPC.AppendEntriesRequest,
+          RaftRPC.AppendEntriesReply> getAppendEntriesRPCMethod;
 
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
-  public static io.grpc.MethodDescriptor<ProtoBuf.RaftRPC.AppendEntriesRequest,
-      ProtoBuf.RaftRPC.AppendEntriesReply> getAppendEntriesRPCMethod() {
-    io.grpc.MethodDescriptor<ProtoBuf.RaftRPC.AppendEntriesRequest, ProtoBuf.RaftRPC.AppendEntriesReply> getAppendEntriesRPCMethod;
+  public static io.grpc.MethodDescriptor<RaftRPC.AppendEntriesRequest,
+          RaftRPC.AppendEntriesReply> getAppendEntriesRPCMethod() {
+    io.grpc.MethodDescriptor<RaftRPC.AppendEntriesRequest, RaftRPC.AppendEntriesReply> getAppendEntriesRPCMethod;
     if ((getAppendEntriesRPCMethod = RaftNodeServiceGrpc.getAppendEntriesRPCMethod) == null) {
       synchronized (RaftNodeServiceGrpc.class) {
         if ((getAppendEntriesRPCMethod = RaftNodeServiceGrpc.getAppendEntriesRPCMethod) == null) {
           RaftNodeServiceGrpc.getAppendEntriesRPCMethod = getAppendEntriesRPCMethod = 
-              io.grpc.MethodDescriptor.<ProtoBuf.RaftRPC.AppendEntriesRequest, ProtoBuf.RaftRPC.AppendEntriesReply>newBuilder()
+              io.grpc.MethodDescriptor.<RaftRPC.AppendEntriesRequest, RaftRPC.AppendEntriesReply>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
                   "raft.RaftNodeService", "AppendEntriesRPC"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  ProtoBuf.RaftRPC.AppendEntriesRequest.getDefaultInstance()))
+                  RaftRPC.AppendEntriesRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  ProtoBuf.RaftRPC.AppendEntriesReply.getDefaultInstance()))
+                  RaftRPC.AppendEntriesReply.getDefaultInstance()))
                   .setSchemaDescriptor(new RaftNodeServiceMethodDescriptorSupplier("AppendEntriesRPC"))
                   .build();
           }
@@ -127,15 +120,15 @@ public final class RaftNodeServiceGrpc {
 
     /**
      */
-    public void requestVoteRPC(ProtoBuf.RaftRPC.VoteRequest request,
-        io.grpc.stub.StreamObserver<ProtoBuf.RaftRPC.VoteReply> responseObserver) {
+    public void requestVoteRPC(RaftRPC.VoteRequest request,
+                               io.grpc.stub.StreamObserver<RaftRPC.VoteReply> responseObserver) {
       asyncUnimplementedUnaryCall(getRequestVoteRPCMethod(), responseObserver);
     }
 
     /**
      */
-    public void appendEntriesRPC(ProtoBuf.RaftRPC.AppendEntriesRequest request,
-        io.grpc.stub.StreamObserver<ProtoBuf.RaftRPC.AppendEntriesReply> responseObserver) {
+    public void appendEntriesRPC(RaftRPC.AppendEntriesRequest request,
+                                 io.grpc.stub.StreamObserver<RaftRPC.AppendEntriesReply> responseObserver) {
       asyncUnimplementedUnaryCall(getAppendEntriesRPCMethod(), responseObserver);
     }
 
@@ -145,15 +138,15 @@ public final class RaftNodeServiceGrpc {
             getRequestVoteRPCMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                ProtoBuf.RaftRPC.VoteRequest,
-                ProtoBuf.RaftRPC.VoteReply>(
+                      RaftRPC.VoteRequest,
+                      RaftRPC.VoteReply>(
                   this, METHODID_REQUEST_VOTE_RPC)))
           .addMethod(
             getAppendEntriesRPCMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                ProtoBuf.RaftRPC.AppendEntriesRequest,
-                ProtoBuf.RaftRPC.AppendEntriesReply>(
+                      RaftRPC.AppendEntriesRequest,
+                      RaftRPC.AppendEntriesReply>(
                   this, METHODID_APPEND_ENTRIES_RPC)))
           .build();
     }
@@ -182,16 +175,16 @@ public final class RaftNodeServiceGrpc {
 
     /**
      */
-    public void requestVoteRPC(ProtoBuf.RaftRPC.VoteRequest request,
-        io.grpc.stub.StreamObserver<ProtoBuf.RaftRPC.VoteReply> responseObserver) {
+    public void requestVoteRPC(RaftRPC.VoteRequest request,
+                               io.grpc.stub.StreamObserver<RaftRPC.VoteReply> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getRequestVoteRPCMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      */
-    public void appendEntriesRPC(ProtoBuf.RaftRPC.AppendEntriesRequest request,
-        io.grpc.stub.StreamObserver<ProtoBuf.RaftRPC.AppendEntriesReply> responseObserver) {
+    public void appendEntriesRPC(RaftRPC.AppendEntriesRequest request,
+                                 io.grpc.stub.StreamObserver<RaftRPC.AppendEntriesReply> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(getAppendEntriesRPCMethod(), getCallOptions()), request, responseObserver);
     }
@@ -220,14 +213,14 @@ public final class RaftNodeServiceGrpc {
 
     /**
      */
-    public ProtoBuf.RaftRPC.VoteReply requestVoteRPC(ProtoBuf.RaftRPC.VoteRequest request) {
+    public RaftRPC.VoteReply requestVoteRPC(RaftRPC.VoteRequest request) {
       return blockingUnaryCall(
           getChannel(), getRequestVoteRPCMethod(), getCallOptions(), request);
     }
 
     /**
      */
-    public ProtoBuf.RaftRPC.AppendEntriesReply appendEntriesRPC(ProtoBuf.RaftRPC.AppendEntriesRequest request) {
+    public RaftRPC.AppendEntriesReply appendEntriesRPC(RaftRPC.AppendEntriesRequest request) {
       return blockingUnaryCall(
           getChannel(), getAppendEntriesRPCMethod(), getCallOptions(), request);
     }
@@ -256,16 +249,16 @@ public final class RaftNodeServiceGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<ProtoBuf.RaftRPC.VoteReply> requestVoteRPC(
-        ProtoBuf.RaftRPC.VoteRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<RaftRPC.VoteReply> requestVoteRPC(
+        RaftRPC.VoteRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getRequestVoteRPCMethod(), getCallOptions()), request);
     }
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<ProtoBuf.RaftRPC.AppendEntriesReply> appendEntriesRPC(
-        ProtoBuf.RaftRPC.AppendEntriesRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<RaftRPC.AppendEntriesReply> appendEntriesRPC(
+        RaftRPC.AppendEntriesRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getAppendEntriesRPCMethod(), getCallOptions()), request);
     }
@@ -292,12 +285,12 @@ public final class RaftNodeServiceGrpc {
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_REQUEST_VOTE_RPC:
-          serviceImpl.requestVoteRPC((ProtoBuf.RaftRPC.VoteRequest) request,
-              (io.grpc.stub.StreamObserver<ProtoBuf.RaftRPC.VoteReply>) responseObserver);
+          serviceImpl.requestVoteRPC((RaftRPC.VoteRequest) request,
+              (io.grpc.stub.StreamObserver<RaftRPC.VoteReply>) responseObserver);
           break;
         case METHODID_APPEND_ENTRIES_RPC:
-          serviceImpl.appendEntriesRPC((ProtoBuf.RaftRPC.AppendEntriesRequest) request,
-              (io.grpc.stub.StreamObserver<ProtoBuf.RaftRPC.AppendEntriesReply>) responseObserver);
+          serviceImpl.appendEntriesRPC((RaftRPC.AppendEntriesRequest) request,
+              (io.grpc.stub.StreamObserver<RaftRPC.AppendEntriesReply>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -321,7 +314,7 @@ public final class RaftNodeServiceGrpc {
 
     @java.lang.Override
     public com.google.protobuf.Descriptors.FileDescriptor getFileDescriptor() {
-      return ProtoBuf.RaftRPC.getDescriptor();
+      return RaftRPC.getDescriptor();
     }
 
     @java.lang.Override

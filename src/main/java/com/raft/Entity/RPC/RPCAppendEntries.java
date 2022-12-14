@@ -1,6 +1,6 @@
-package Entity.RPC;
+package com.raft.Entity.RPC;
 
-import Entity.LogEntry;
+import com.raft.Entity.LogEntry;
 
 import java.util.List;
 

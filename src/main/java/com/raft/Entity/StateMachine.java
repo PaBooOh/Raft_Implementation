@@ -1,10 +1,10 @@
-package Entity;
+package com.raft.Entity;
 
-import Entity.LogEntry;
-import ProtoBuf.RaftRPC;
+import com.raft.ProtoBuf.RaftRPC;
 
 import java.util.ArrayList;
 import java.util.List;
+//import
 
 
 public class StateMachine {

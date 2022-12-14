@@ -1,4 +1,6 @@
-import RaftRPCService.RaftNodeService;
+package com.raft.Main;
+
+import com.raft.RaftRPCService.RaftNodeService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
