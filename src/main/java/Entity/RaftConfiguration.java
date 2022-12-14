@@ -1,9 +1,11 @@
+package Entity;
+
 public class RaftConfiguration {
 
     // Milliseconds
-    private int electionTimeout = 5000;
-    private int heartbeatInterval = 500; // Initiated from
-
+    private int electionTimeout = 5000; // 5s
+    private int heartbeatInterval = 500; // 0.5s
+    // Thread
     private int threadPoolSize = 20;
 
     public int getElectionTimeout() {
@@ -29,4 +31,6 @@ public class RaftConfiguration {
     public void setThreadPoolSize(int threadPoolSize) {
         this.threadPoolSize = threadPoolSize;
     }
+
+
 }
