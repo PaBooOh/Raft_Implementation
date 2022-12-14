@@ -26,7 +26,7 @@ public class ServerTest {
         // "host1:port1,host2:port2,host3:port3"
         String clusterString = args[0];
         String localServerString = args[1];
-        LOGGER.info("Building cluster >>> Start a server (Server ={} in cluster={}", localServerString, clusterString);
+        System.out.print("Building cluster >>> Start a server (Server =" + localServerString + " in cluster=" + clusterString + ")");
         String[] serversString = clusterString.split(",");
         RaftRPC.Server localServer = getServer(serversString, localServerString);
 

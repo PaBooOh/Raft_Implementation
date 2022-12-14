@@ -1,0 +1,15 @@
+C:\Users\Ytrebil\IdeaProjects\RaftImplementation\src\main\java\com\raft\Main\ServerTest.java
+C:\Users\Ytrebil\IdeaProjects\RaftImplementation\src\main\java\com\raft\Entity\NodeRole.java
+C:\Users\Ytrebil\IdeaProjects\RaftImplementation\src\main\java\com\raft\Entity\RPC\RPCAppendEntries.java
+C:\Users\Ytrebil\IdeaProjects\RaftImplementation\src\main\java\com\raft\RaftRPCService\RaftNodeService.java
+C:\Users\Ytrebil\IdeaProjects\RaftImplementation\src\main\java\com\raft\Entity\LogEntry.java
+C:\Users\Ytrebil\IdeaProjects\RaftImplementation\src\main\java\com\raft\Entity\RaftServer.java
+C:\Users\Ytrebil\IdeaProjects\RaftImplementation\src\main\java\com\raft\Entity\RaftConfiguration.java
+C:\Users\Ytrebil\IdeaProjects\RaftImplementation\src\main\java\com\raft\Main\GrpcServer.java
+C:\Users\Ytrebil\IdeaProjects\RaftImplementation\src\main\java\com\raft\Entity\RPC\RPCRequestVote.java
+C:\Users\Ytrebil\IdeaProjects\RaftImplementation\src\main\java\com\raft\Entity\RaftNode.java
+C:\Users\Ytrebil\IdeaProjects\RaftImplementation\src\main\java\com\raft\Entity\ACK\ACKAppendEntries.java
+C:\Users\Ytrebil\IdeaProjects\RaftImplementation\src\main\java\com\raft\Entity\ACK\ACKRequestVote.java
+C:\Users\Ytrebil\IdeaProjects\RaftImplementation\src\main\java\com\raft\ProtoBuf\RaftNodeServiceGrpc.java
+C:\Users\Ytrebil\IdeaProjects\RaftImplementation\src\main\java\com\raft\ProtoBuf\RaftRPC.java
+C:\Users\Ytrebil\IdeaProjects\RaftImplementation\src\main\java\com\raft\Entity\StateMachine.java
