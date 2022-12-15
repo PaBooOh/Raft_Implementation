@@ -73,7 +73,6 @@ public class RaftServer {
     // Multi-threads is applied to issue multiple requestVote RPCs to other raft nodes.
     private void initiateLeaderElection()
     {
-        System.out.println("'initiateLeaderElection");
         LOGGER.info("Building cluster >>> Server (ServerId={}, ServerTerm={}) has been started", localServer.getServerId(), getCurrentTerm());
         if (electionScheduledFuture != null && !electionScheduledFuture.isDone()) {
             electionScheduledFuture.cancel(true); // interrupt thread
@@ -91,9 +90,8 @@ public class RaftServer {
     {
         lock.lock();
         try {
-            System.out.println("'requestVote");
             setCurrentTerm(getCurrentTerm() + 1);
-            LOGGER.info("Leader Election >>> Candidate (ServerId={}, ServerTerm={}) become candidate and try to canvass ...", localServer.getServerId(), getCurrentTerm());
+            LOGGER.info("Leader Election >>> Server (ServerId={}, ServerTerm={}) become candidate and try to canvass ...", localServer.getServerId(), getCurrentTerm());
             setNodeRole(NodeRole.CANDIDATE);
             setLeaderId(0);
             setVotedFor(localServer.getServerId()); // vote for itself
@@ -115,11 +113,16 @@ public class RaftServer {
 
     private void issueRequestVoteRPC(int targetServerId, String targetServerHost, int targetServerPort)
     {
-        LOGGER.info("Leader Election >>> Start issue RequestVoteRPC ...");
+        LOGGER.info("Leader Election >>> Candidate (ServerId={}, ServerHost={}, ServerPort={}) is trying issuing RequestVoteRPC to a server (ServerId={}, ServerHost={}, ServerPort={})",
+                localServer.getServerId(),
+                localServer.getHost(),
+                localServer.getPort(),
+                targetServerId,
+                targetServerHost,
+                targetServerPort);
         RaftRPC.VoteRequest.Builder requestBuilder = RaftRPC.VoteRequest.newBuilder();
         lock.lock();
         try {
-            
             requestBuilder.setCandidateId(localServer.getServerId())
                     .setCandidateTerm(getCurrentTerm())
                     .setLastLogIndex(getStateMachine().getLastLogIndex())
@@ -189,7 +192,7 @@ public class RaftServer {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         int randomElectionTimeout = raftConfiguration.getElectionTimeout()
                 + random.nextInt(0, raftConfiguration.getElectionTimeout());
-        LOGGER.info("This server (ServerId={}, ServerTerm={}) will become candidate and initiate election after {} ms",
+        LOGGER.info("Timeout >> Server (ServerId={}, ServerTerm={}) will initiate election after {} ms (election timeout)",
                 localServer.getServerId(),
                 getCurrentTerm(),
                 randomElectionTimeout);

@@ -31,10 +31,12 @@ com\raft\ProtoBuf\RaftNodeServiceGrpc$RaftNodeServiceBlockingStub.class
 com\raft\ProtoBuf\RaftRPC.class
 com\raft\ProtoBuf\RaftRPC$LogEntry$Builder.class
 com\raft\Entity\RaftServer$1.class
+com\raft\ProtoBuf\RaftRPC$1.class
 com\raft\ProtoBuf\RaftRPC$AppendEntriesReply$1.class
 com\raft\ProtoBuf\RaftRPC$VoteRequestOrBuilder.class
 com\raft\ProtoBuf\RaftRPC$VoteReplyOrBuilder.class
 com\raft\Entity\LogEntry.class
+com\raft\ProtoBuf\RaftNodeServiceGrpc$1.class
 com\raft\ProtoBuf\RaftRPC$Server.class
 com\raft\ProtoBuf\RaftRPC$VoteReply.class
 com\raft\ProtoBuf\RaftRPC$ServerOrBuilder.class
