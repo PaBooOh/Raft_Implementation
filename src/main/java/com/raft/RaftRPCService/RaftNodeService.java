@@ -1,5 +1,6 @@
 package com.raft.RaftRPCService;
 
+import com.raft.Entity.NodeRole;
 import com.raft.Entity.RaftServer;
 import com.raft.ProtoBuf.RaftNodeServiceGrpc;
 import com.raft.ProtoBuf.RaftRPC;
@@ -19,48 +20,56 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
         receiver.getLock().lock();
         try {
             RaftRPC.VoteReply.Builder responseBuilder = RaftRPC.VoteReply.newBuilder();
-
-
             long candidateTerm = candidateRequest.getCandidateTerm();
             long receiverTerm = receiver.getCurrentTerm();
-            responseBuilder.setCurrentTerm(receiverTerm);
-            // If candidate is fake, i.e., not in the Raft cluster
-//            if (!ConfigurationUtils.containsServer(raftServer.getConfiguration(), candidateRequest.getCandidateId())) {
-//                responseBuilder.setVoteGranted(false);
-//                responseObserver.onNext(responseBuilder.build());
-//                responseObserver.onCompleted();
-//            }
-            // If candidate's term < receiver's term
-            if (candidateTerm < receiver.getCurrentTerm()) {
-                responseBuilder.setVoteGranted(false);
-                responseObserver.onNext(responseBuilder.build());
-                responseObserver.onCompleted();
-            }
-            //
-            if (candidateRequest.getCandidateTerm() > receiver.getCurrentTerm())
-            {
-                receiver.stepDown(candidateRequest.getCandidateTerm());
-            }
-
-            // Count votes
             long candidateLastLogTerm = candidateRequest.getLastLogTerm();
             long candidateLastLogIndex = candidateRequest.getLastLogIndex();
             long receiverLastLogTerm = receiver.getStateMachine().getLastLogTerm();
             long receiverLastLogIndex = receiver.getStateMachine().getLastLogIndex();
+            int receiverVotedFor = receiver.getVotedFor();
             boolean logMatchingSafety = candidateLastLogTerm > receiverLastLogTerm
                     || (candidateLastLogTerm == receiverLastLogTerm && candidateLastLogIndex >= receiverLastLogIndex);
 
-            if (receiver.getVotedFor() == 0 && logMatchingSafety)
+            responseBuilder.setCurrentTerm(receiverTerm);
+            // If candidate's term < receiver's term
+            if (candidateTerm < receiverTerm)
             {
-                receiver.stepDown(candidateTerm);
-                receiver.setVotedFor(candidateRequest.getCandidateId());
-//                raftServer.getRaftLog().updateMetaData(raftServer.getCurrentTerm(), raftServer.getVotedFor(), null, null);
-                responseBuilder.setVoteGranted(true);
-                responseBuilder.setCurrentTerm(receiver.getCurrentTerm());
+                responseBuilder.setVoteGranted(false);
+                responseObserver.onNext(responseBuilder.build());
+                responseObserver.onCompleted();
+                return;
             }
-            LOGGER.info("Leader Election Reply >>> Candidate (ServerId={}, ServerTerm={}) request a vote from server (ServerId={}, ServerTerm={}) and granted={}",
-                    candidateRequest.getCandidateId(), candidateRequest.getCandidateTerm(), receiver.getServerId(),
-                    receiver.getCurrentTerm(), responseBuilder.getVoteGranted());
+            //
+            if(candidateTerm > receiverTerm &&
+                    (receiver.getNodeRole() == NodeRole.CANDIDATE || receiver.getNodeRole() == NodeRole.LEADER))
+            {
+                receiver.stepDown(candidateRequest.getCandidateTerm());
+            }
+
+
+            if(receiverVotedFor == 0) // 0 not yet voted, the server(ID) it voted for otherwise
+            {
+                // Agree to vote
+                if(logMatchingSafety)
+                {
+                    // receiver.stepDown(candidateTerm);
+                    receiver.setVotedFor(candidateRequest.getCandidateId());
+                    responseBuilder.setVoteGranted(true);
+
+                }
+                // Disagree to vote
+                else
+                {
+                    responseBuilder.setVoteGranted(false);
+                }
+            }
+            // Disagree to vote since this receiver has already voted for other servers (or itself)
+            else
+            {
+                responseBuilder.setVoteGranted(false);
+            }
+            responseObserver.onNext(responseBuilder.build());
+            responseObserver.onCompleted();
         } finally {
             receiver.getLock().unlock();
         }

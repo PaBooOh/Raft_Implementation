@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -60,6 +61,7 @@ public class RaftServer {
 
     public void buildRaftServer()
     {
+        LOGGER.info("Building cluster >>> Server (ServerId={}, ServerTerm={}) has been started", localServer.getServerId(), getCurrentTerm());
         executorService = new ThreadPoolExecutor(
                 raftConfiguration.getThreadPoolSize(),
                 raftConfiguration.getThreadPoolSize(),
@@ -73,16 +75,11 @@ public class RaftServer {
     // Multi-threads is applied to issue multiple requestVote RPCs to other raft nodes.
     private void initiateLeaderElection()
     {
-        LOGGER.info("Building cluster >>> Server (ServerId={}, ServerTerm={}) has been started", localServer.getServerId(), getCurrentTerm());
+        // interrupt thread
         if (electionScheduledFuture != null && !electionScheduledFuture.isDone()) {
-            electionScheduledFuture.cancel(true); // interrupt thread
+            electionScheduledFuture.cancel(true);
         }
-        electionScheduledFuture = scheduledExecutorService.schedule(new Runnable() {
-            @Override
-            public void run() {
-                requestVote();
-            }
-        }, getElectionTimeoutMs(), TimeUnit.MILLISECONDS);
+        electionScheduledFuture = scheduledExecutorService.schedule(this::requestVote, getElectionTimeoutMs(), TimeUnit.MILLISECONDS);
     }
 
     //
@@ -182,20 +179,20 @@ public class RaftServer {
         } finally {
             lock.unlock();
         }
-
-
-
     }
 
     private long getElectionTimeoutMs()
     {
-        ThreadLocalRandom random = ThreadLocalRandom.current();
-        int randomElectionTimeout = raftConfiguration.getElectionTimeout()
-                + random.nextInt(0, raftConfiguration.getElectionTimeout());
-        LOGGER.info("Timeout >> Server (ServerId={}, ServerTerm={}) will initiate election after {} ms (election timeout)",
+//        ThreadLocalRandom random = ThreadLocalRandom.current();
+//        int randomElectionTimeout = raftConfiguration.getElectionTimeout()
+//                + random.nextInt(0, raftConfiguration.getElectionTimeout());
+        Random random = new Random();
+        int minElectionTimeout = raftConfiguration.getElectionTimeout();
+        int randomElectionTimeout = random.nextInt(minElectionTimeout+1) + minElectionTimeout;
+        LOGGER.info("Server Timeout {} >> Server (ServerId={}, ServerTerm={}) starts timeout Timer ...",
+                randomElectionTimeout,
                 localServer.getServerId(),
-                getCurrentTerm(),
-                randomElectionTimeout);
+                getCurrentTerm());
         return randomElectionTimeout;
     }
 
@@ -213,12 +210,9 @@ public class RaftServer {
         LOGGER.info("Step down >>> Candidate/Leader (ServerId={}, ServerTerm={}) starts stepping down ... since receive a RPC returning greater term than itself",
                 localServer.getServerId(),
                 getCurrentTerm());
-        if (currentTerm < newTerm)
-        {
-            setCurrentTerm(newTerm);
-            setLeaderId(0);
-            setVotedFor(0);
-        }
+        setCurrentTerm(newTerm);
+        setLeaderId(0);
+        setVotedFor(0);
         setNodeRole(NodeRole.FOLLOWER); // Step down
         // stop heartbeat
 //        if (heartbeatScheduledFuture != null && !heartbeatScheduledFuture.isDone()) {
