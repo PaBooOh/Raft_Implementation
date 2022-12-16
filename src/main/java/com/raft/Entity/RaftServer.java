@@ -140,10 +140,10 @@ public class RaftServer {
                     .usePlaintext()
                     .build();
             RaftNodeServiceGrpc.RaftNodeServiceBlockingStub blockingStub = RaftNodeServiceGrpc.newBlockingStub(channel);
-            LOGGER.info("Connection={}, targetServerId={}", channel.getState(true), targetServerId);
+
             RaftRPC.VoteRequest request = requestBuilder.build();
             reply = blockingStub.requestVoteRPC(request);
-            LOGGER.info("Connection={}, targetServerId={}", channel.getState(true), targetServerId);
+//            LOGGER.info("Connection={}, targetServerId={}", channel.getState(true), targetServerId);
 //            if(reply==null)
 //            {
 //                while (true)
