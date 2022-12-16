@@ -203,7 +203,7 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
             {
                 RaftRPC.LogEntry logEntry = RaftRPC.LogEntry.newBuilder()
                         .setCommand(request.getCommand())
-                        .setTerm(receiverServerId)
+                        .setTerm(receiver.getCurrentTerm())
                         .setIndex(receiver.getStateMachine().getLastLogIndex() + 1)
                         .build();
                 List<RaftRPC.LogEntry> logEntries = new ArrayList<>();
