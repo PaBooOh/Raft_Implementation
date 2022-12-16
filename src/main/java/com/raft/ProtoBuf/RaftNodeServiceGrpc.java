@@ -10,7 +10,7 @@ import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
 /**
  * <pre>
- * Services
+ * Raft Services
  * </pre>
  */
 @javax.annotation.Generated(
@@ -87,6 +87,38 @@ public final class RaftNodeServiceGrpc {
      }
      return getAppendEntriesRPCMethod;
   }
+  @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
+  @java.lang.Deprecated // Use {@link #getClientRequestRPCMethod()} instead. 
+  public static final io.grpc.MethodDescriptor<RaftRPC.ClientRequest,
+          RaftRPC.ClientReply> METHOD_CLIENT_REQUEST_RPC = getClientRequestRPCMethod();
+
+  private static volatile io.grpc.MethodDescriptor<RaftRPC.ClientRequest,
+          RaftRPC.ClientReply> getClientRequestRPCMethod;
+
+  @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
+  public static io.grpc.MethodDescriptor<RaftRPC.ClientRequest,
+          RaftRPC.ClientReply> getClientRequestRPCMethod() {
+    io.grpc.MethodDescriptor<RaftRPC.ClientRequest, RaftRPC.ClientReply> getClientRequestRPCMethod;
+    if ((getClientRequestRPCMethod = RaftNodeServiceGrpc.getClientRequestRPCMethod) == null) {
+      synchronized (RaftNodeServiceGrpc.class) {
+        if ((getClientRequestRPCMethod = RaftNodeServiceGrpc.getClientRequestRPCMethod) == null) {
+          RaftNodeServiceGrpc.getClientRequestRPCMethod = getClientRequestRPCMethod = 
+              io.grpc.MethodDescriptor.<RaftRPC.ClientRequest, RaftRPC.ClientReply>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "raft.RaftNodeService", "ClientRequestRPC"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  RaftRPC.ClientRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  RaftRPC.ClientReply.getDefaultInstance()))
+                  .setSchemaDescriptor(new RaftNodeServiceMethodDescriptorSupplier("ClientRequestRPC"))
+                  .build();
+          }
+        }
+     }
+     return getClientRequestRPCMethod;
+  }
 
   /**
    * Creates a new async stub that supports all call types for the service
@@ -113,7 +145,7 @@ public final class RaftNodeServiceGrpc {
 
   /**
    * <pre>
-   * Services
+   * Raft Services
    * </pre>
    */
   public static abstract class RaftNodeServiceImplBase implements io.grpc.BindableService {
@@ -132,6 +164,13 @@ public final class RaftNodeServiceGrpc {
       asyncUnimplementedUnaryCall(getAppendEntriesRPCMethod(), responseObserver);
     }
 
+    /**
+     */
+    public void clientRequestRPC(RaftRPC.ClientRequest request,
+                                 io.grpc.stub.StreamObserver<RaftRPC.ClientReply> responseObserver) {
+      asyncUnimplementedUnaryCall(getClientRequestRPCMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -148,13 +187,20 @@ public final class RaftNodeServiceGrpc {
                       RaftRPC.AppendEntriesRequest,
                       RaftRPC.AppendEntriesReply>(
                   this, METHODID_APPEND_ENTRIES_RPC)))
+          .addMethod(
+            getClientRequestRPCMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                      RaftRPC.ClientRequest,
+                      RaftRPC.ClientReply>(
+                  this, METHODID_CLIENT_REQUEST_RPC)))
           .build();
     }
   }
 
   /**
    * <pre>
-   * Services
+   * Raft Services
    * </pre>
    */
   public static final class RaftNodeServiceStub extends io.grpc.stub.AbstractStub<RaftNodeServiceStub> {
@@ -188,11 +234,19 @@ public final class RaftNodeServiceGrpc {
       asyncUnaryCall(
           getChannel().newCall(getAppendEntriesRPCMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void clientRequestRPC(RaftRPC.ClientRequest request,
+                                 io.grpc.stub.StreamObserver<RaftRPC.ClientReply> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getClientRequestRPCMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
    * <pre>
-   * Services
+   * Raft Services
    * </pre>
    */
   public static final class RaftNodeServiceBlockingStub extends io.grpc.stub.AbstractStub<RaftNodeServiceBlockingStub> {
@@ -224,11 +278,18 @@ public final class RaftNodeServiceGrpc {
       return blockingUnaryCall(
           getChannel(), getAppendEntriesRPCMethod(), getCallOptions(), request);
     }
+
+    /**
+     */
+    public RaftRPC.ClientReply clientRequestRPC(RaftRPC.ClientRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getClientRequestRPCMethod(), getCallOptions(), request);
+    }
   }
 
   /**
    * <pre>
-   * Services
+   * Raft Services
    * </pre>
    */
   public static final class RaftNodeServiceFutureStub extends io.grpc.stub.AbstractStub<RaftNodeServiceFutureStub> {
@@ -262,10 +323,19 @@ public final class RaftNodeServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getAppendEntriesRPCMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<RaftRPC.ClientReply> clientRequestRPC(
+        RaftRPC.ClientRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getClientRequestRPCMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_REQUEST_VOTE_RPC = 0;
   private static final int METHODID_APPEND_ENTRIES_RPC = 1;
+  private static final int METHODID_CLIENT_REQUEST_RPC = 2;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -291,6 +361,10 @@ public final class RaftNodeServiceGrpc {
         case METHODID_APPEND_ENTRIES_RPC:
           serviceImpl.appendEntriesRPC((RaftRPC.AppendEntriesRequest) request,
               (io.grpc.stub.StreamObserver<RaftRPC.AppendEntriesReply>) responseObserver);
+          break;
+        case METHODID_CLIENT_REQUEST_RPC:
+          serviceImpl.clientRequestRPC((RaftRPC.ClientRequest) request,
+              (io.grpc.stub.StreamObserver<RaftRPC.ClientReply>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -355,6 +429,7 @@ public final class RaftNodeServiceGrpc {
               .setSchemaDescriptor(new RaftNodeServiceFileDescriptorSupplier())
               .addMethod(getRequestVoteRPCMethod())
               .addMethod(getAppendEntriesRPCMethod())
+              .addMethod(getClientRequestRPCMethod())
               .build();
         }
       }

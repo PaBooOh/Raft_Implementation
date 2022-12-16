@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ServerTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RaftServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerTest.class);
 
     public static void main(String[] args) throws IOException, InterruptedException {
         if (args.length != 2)
@@ -62,7 +62,7 @@ public class ServerTest {
         raftServer.buildRaftServer();
     }
 
-    private static void waitPeersAvailable(List<RaftRPC.Server> peer) throws InterruptedException {
+    public static void waitPeersAvailable(List<RaftRPC.Server> peer) throws InterruptedException {
         for(RaftRPC.Server server: peer)
         {
             String targetServerHost = server.getHost();
@@ -85,7 +85,7 @@ public class ServerTest {
     }
 
 
-    private static RaftRPC.Server getServer(String[] serversString, String serverString) {
+    public static RaftRPC.Server getServer(String[] serversString, String serverString) {
 
         int serverId = getServerId(serversString, serverString);
         if (serverId == 0) {

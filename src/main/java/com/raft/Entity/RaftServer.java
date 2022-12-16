@@ -2,10 +2,10 @@ package com.raft.Entity;
 
 import com.raft.ProtoBuf.RaftNodeServiceGrpc;
 import com.raft.ProtoBuf.RaftRPC;
-import io.grpc.ConnectivityState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.*;
@@ -34,6 +34,7 @@ public class RaftServer {
     private int leaderId;
     private int serverId;
     private int votedCount;
+    private int ackCount;
 
     // Persistent
     private long currentTerm;
@@ -62,6 +63,7 @@ public class RaftServer {
         this.currentTerm = 0;
         this.commitIndex = 0;
         this.lastAppliedIndex = 0;
+        this.ackCount = 0;
     }
 
     public void buildRaftServer()
@@ -143,15 +145,6 @@ public class RaftServer {
 
             RaftRPC.VoteRequest request = requestBuilder.build();
             reply = blockingStub.requestVoteRPC(request);
-//            LOGGER.info("Connection={}, targetServerId={}", channel.getState(true), targetServerId);
-//            if(reply==null)
-//            {
-//                while (true)
-//                {
-//                    LOGGER.info("Waiting for other servers connected...");
-////                    RaftRPC.VoteReply newreply = RaftNodeServiceGrpc.newBlockingStub(channel).requestVoteRPC(request);
-//                }
-//            }
             long receiverTerm = reply.getCurrentTerm();
             long candidateTerm = getCurrentTerm();
             boolean receiverVoteGranted = reply.getVoteGranted();
@@ -186,11 +179,12 @@ public class RaftServer {
                                 candidateTerm);
                         setNodeRole(NodeRole.LEADER);
                         setLeaderId(localServer.getServerId());
+                        setVotedCount(0);
                         // No need to request vote because have received the majority of servers, i.e., already become leader
                         if (electionScheduledFuture != null && !electionScheduledFuture.isDone()) {
                             electionScheduledFuture.cancel(true);
                         }
-                        sendHeartbeatToOtherServers(); // Leader starts normal operation
+                        sendAppendEntriesToOtherServers(new ArrayList<>()); // Leader starts normal operation (empty entries)
                     }
                 }
                 else
@@ -208,8 +202,8 @@ public class RaftServer {
         }
     }
 
-    // Only for leader
-    private void sendHeartbeatToOtherServers()
+    // Only for leader: AppendEntries or Heartbeat
+    public void sendAppendEntriesToOtherServers(List<RaftRPC.LogEntry> logEntries)
     {
         // It is the first time that the new leader issue heartbeatRPCs (appendEntriesRPC with empty entry) to its followers
         for (RaftRPC.Server server: cluster.getServersList())
@@ -217,19 +211,20 @@ public class RaftServer {
             int targetServerId = server.getServerId();
             String targetServerHost = server.getHost();
             int targetServerPort = server.getPort();
-
             if(targetServerId == localServer.getServerId())
                 continue;
-            executorService.submit(() -> {
-                issueAppendEntriesRPC(targetServerId, targetServerHost, targetServerPort);});
+            executorService.submit(() -> issueAppendEntriesRPC(targetServerId, targetServerHost, targetServerPort, logEntries));
         }
 
-        // reissue heartbeatRPCs
-        if (heartbeatScheduledFuture != null && !heartbeatScheduledFuture.isDone())
+        if(logEntries.isEmpty())
         {
-            heartbeatScheduledFuture.cancel(true);
+            // reissue heartbeatRPCs
+            if (heartbeatScheduledFuture != null && !heartbeatScheduledFuture.isDone())
+            {
+                heartbeatScheduledFuture.cancel(true);
+            }
+            heartbeatScheduledFuture = scheduledExecutorService.schedule(() -> sendAppendEntriesToOtherServers(new ArrayList<>()), raftConfiguration.getHeartbeatInterval(), TimeUnit.MILLISECONDS);
         }
-        heartbeatScheduledFuture = scheduledExecutorService.schedule(this::sendHeartbeatToOtherServers, raftConfiguration.getHeartbeatInterval(), TimeUnit.MILLISECONDS);
     }
 
     // Except for leader, i.e., only for followers
@@ -246,27 +241,38 @@ public class RaftServer {
         return randomElectionTimeout;
     }
 
-    private void issueAppendEntriesRPC(int targetServerId, String targetServerHost, int targetServerPort)
+    private void issueAppendEntriesRPC(int targetServerId, String targetServerHost, int targetServerPort, List<RaftRPC.LogEntry> logEntries)
     {
         lock.lock();
         try {
             long prevLogIndex = logMatchMap.get(targetServerId);
             long prevLogTerm = getStateMachine().getLogEntryTermByIndex(prevLogIndex);
-            RaftRPC.AppendEntriesRequest request = RaftRPC.AppendEntriesRequest.newBuilder()
+            boolean isHeartbeat = logEntries.isEmpty();
+            RaftRPC.AppendEntriesRequest.Builder requestBuilder = RaftRPC.AppendEntriesRequest.newBuilder()
                     .setLeaderId(localServer.getServerId())
                     .setLeaderTerm(getCurrentTerm())
                     .setPrevLogIndex(prevLogIndex)
                     .setPrevLogTerm(prevLogTerm)
-                    .setLeaderCommit(commitIndex)
-                    .build();
+                    .setLeaderCommit(commitIndex);
+            // This is not heartbeat but appendEntries
+            if(!isHeartbeat)
+            {
+                for(RaftRPC.LogEntry logEntry: logEntries)
+                {
+                    requestBuilder.addLogEntries(logEntry);
+                }
+            }
+            RaftRPC.AppendEntriesRequest request = requestBuilder.build();
+            // Build the channel between leader and follower
             ManagedChannel channel = ManagedChannelBuilder.forAddress(targetServerHost, targetServerPort)
                     .usePlaintext()
                     .build();
-
             RaftNodeServiceGrpc.RaftNodeServiceBlockingStub blockingStub = RaftNodeServiceGrpc.newBlockingStub(channel);
             RaftRPC.AppendEntriesReply reply = blockingStub.appendEntriesRPC(request);
-            LOGGER.info("[{}] Normal operation-[Send heartbeat] >>> Server (ServerId={}, ServerTerm={}) is issuing HeartbeatRPCs to its followers ...",
+            String rpcType = isHeartbeat ? "Heartbeat":"AppendEntries";
+            LOGGER.info("[{}] Normal operation-[{}] >>> Server (ServerId={}, ServerTerm={}) is issuing AppendEntriesRPCs to its followers ...",
                     getNodeRole().toString(),
+                    rpcType,
                     localServer.getServerId(),
                     getCurrentTerm());
             long receiverTerm = reply.getCurrentTerm();
@@ -322,6 +328,7 @@ public class RaftServer {
         setCurrentTerm(newTerm);
         setLeaderId(0);
         setVotedFor(0);
+        setVotedCount(0);
         // If the server that just stepped down is the leader, then stop sending heartbeat RPCs
         if (heartbeatScheduledFuture != null && !heartbeatScheduledFuture.isDone()) {
             heartbeatScheduledFuture.cancel(true);
@@ -387,5 +394,13 @@ public class RaftServer {
 
     public long getCommitIndex() {
         return commitIndex;
+    }
+
+    public int getAckCount() {
+        return ackCount;
+    }
+
+    public void setAckCount(int ackCount) {
+        this.ackCount = ackCount;
     }
 }

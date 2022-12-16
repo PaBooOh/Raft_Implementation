@@ -88,6 +88,7 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
             long leaderTerm = request.getLeaderTerm();
             long receiverTerm = receiver.getCurrentTerm();
             long receiverId = receiver.getServerId();
+            long leaderCommit = request.getLeaderCommit();
             NodeRole receiverRole = receiver.getNodeRole();
             boolean isHeartbeat = request.getLogEntriesCount() == 0;
             long leaderPrevLogIndex = request.getPrevLogIndex();
@@ -146,7 +147,7 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
             // Heartbeat
             if(isHeartbeat)
             {
-                LOGGER.info("[{}] {}-[Success] >>> Server (ServerId={}, ServerTerm={}) has received heartbeat. The latest entry's (Index={}, Term={}) command is <{}> ",
+                LOGGER.info("[{}] {}-[Success] >>> Server (ServerId={}, ServerTerm={}) has received heartbeat. The latest entry's (Index={}, Term={}) Command is <{}> ",
                         receiverRole.toString(),
                         rpcType,
                         receiverId,
@@ -160,7 +161,7 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
             {
                 List<RaftRPC.LogEntry> logEntriesFromRequest = request.getLogEntriesList();
                 receiver.getStateMachine().getLogContainer().addAll(logEntriesFromRequest);
-                LOGGER.info("[{}] {}-[Success] >>> Server (ServerId={}, ServerTerm={}) has added entries provided. The latest entry's (Index={}, Term={}) command is <{}> ",
+                LOGGER.info("[{}] {}-[Success] >>> Server (ServerId={}, ServerTerm={}) has added entries provided. The latest entry's (Index={}, Term={}) Command={}> ",
                         receiverRole.toString(),
                         rpcType,
                         receiverId,
@@ -173,6 +174,45 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
                     .setCurrentTerm(receiverTerm)
                     .setSuccess(true)
                     .build();
+            responseObserver.onNext(responseBuilder.build());
+            responseObserver.onCompleted();
+        }finally {
+            receiver.getLock().unlock();
+        }
+    }
+
+    @Override
+    public void clientRequestRPC(RaftRPC.ClientRequest request, StreamObserver<RaftRPC.ClientReply> responseObserver) {
+        receiver.getLock().lock();
+        try {
+            RaftRPC.ClientReply.Builder responseBuilder = RaftRPC.ClientReply.newBuilder();
+            int receiverServerId = receiver.getServerId();
+            int leaderServerId = receiver.getLeaderId();
+
+            responseBuilder.setLeaderId(leaderServerId);
+
+            // if the receiver is not the leader
+            if(receiverServerId != leaderServerId)
+            {
+                responseBuilder
+                        .setIsLeader(false)
+                        .build();
+            }
+            // if the receiver is the leader
+            else
+            {
+                RaftRPC.LogEntry logEntry = RaftRPC.LogEntry.newBuilder()
+                        .setCommand(request.getCommand())
+                        .setTerm(receiverServerId)
+                        .setIndex(receiver.getStateMachine().getLastLogIndex() + 1)
+                        .build();
+                List<RaftRPC.LogEntry> logEntries = new ArrayList<>();
+                logEntries.add(logEntry);
+                receiver.sendAppendEntriesToOtherServers(logEntries);
+                responseBuilder
+                        .setIsLeader(true)
+                        .build();
+            }
             responseObserver.onNext(responseBuilder.build());
             responseObserver.onCompleted();
         }finally {

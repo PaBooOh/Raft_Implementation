@@ -1506,6 +1506,1113 @@ public final class RaftRPC {
 
   }
 
+  public interface ClientRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:raft.ClientRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string command = 1;</code>
+     * @return The command.
+     */
+    java.lang.String getCommand();
+    /**
+     * <code>string command = 1;</code>
+     * @return The bytes for command.
+     */
+    com.google.protobuf.ByteString
+        getCommandBytes();
+  }
+  /**
+   * Protobuf type {@code raft.ClientRequest}
+   */
+  public static final class ClientRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:raft.ClientRequest)
+      ClientRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ClientRequest.newBuilder() to construct.
+    private ClientRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ClientRequest() {
+      command_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new ClientRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return RaftRPC.internal_static_raft_ClientRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return RaftRPC.internal_static_raft_ClientRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              RaftRPC.ClientRequest.class, RaftRPC.ClientRequest.Builder.class);
+    }
+
+    public static final int COMMAND_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object command_ = "";
+    /**
+     * <code>string command = 1;</code>
+     * @return The command.
+     */
+    @java.lang.Override
+    public java.lang.String getCommand() {
+      java.lang.Object ref = command_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        command_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string command = 1;</code>
+     * @return The bytes for command.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getCommandBytes() {
+      java.lang.Object ref = command_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        command_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(command_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, command_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(command_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, command_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof RaftRPC.ClientRequest)) {
+        return super.equals(obj);
+      }
+      RaftRPC.ClientRequest other = (RaftRPC.ClientRequest) obj;
+
+      if (!getCommand()
+          .equals(other.getCommand())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + COMMAND_FIELD_NUMBER;
+      hash = (53 * hash) + getCommand().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static RaftRPC.ClientRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static RaftRPC.ClientRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static RaftRPC.ClientRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static RaftRPC.ClientRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static RaftRPC.ClientRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static RaftRPC.ClientRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static RaftRPC.ClientRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static RaftRPC.ClientRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static RaftRPC.ClientRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static RaftRPC.ClientRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static RaftRPC.ClientRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static RaftRPC.ClientRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(RaftRPC.ClientRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code raft.ClientRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:raft.ClientRequest)
+        RaftRPC.ClientRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return RaftRPC.internal_static_raft_ClientRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return RaftRPC.internal_static_raft_ClientRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                RaftRPC.ClientRequest.class, RaftRPC.ClientRequest.Builder.class);
+      }
+
+      // Construct using ProtoBuf.RaftRPC.ClientRequest.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        command_ = "";
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return RaftRPC.internal_static_raft_ClientRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public RaftRPC.ClientRequest getDefaultInstanceForType() {
+        return RaftRPC.ClientRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public RaftRPC.ClientRequest build() {
+        RaftRPC.ClientRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public RaftRPC.ClientRequest buildPartial() {
+        RaftRPC.ClientRequest result = new RaftRPC.ClientRequest(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(RaftRPC.ClientRequest result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.command_ = command_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof RaftRPC.ClientRequest) {
+          return mergeFrom((RaftRPC.ClientRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(RaftRPC.ClientRequest other) {
+        if (other == RaftRPC.ClientRequest.getDefaultInstance()) return this;
+        if (!other.getCommand().isEmpty()) {
+          command_ = other.command_;
+          bitField0_ |= 0x00000001;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                command_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object command_ = "";
+      /**
+       * <code>string command = 1;</code>
+       * @return The command.
+       */
+      public java.lang.String getCommand() {
+        java.lang.Object ref = command_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          command_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string command = 1;</code>
+       * @return The bytes for command.
+       */
+      public com.google.protobuf.ByteString
+          getCommandBytes() {
+        java.lang.Object ref = command_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          command_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string command = 1;</code>
+       * @param value The command to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCommand(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        command_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string command = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearCommand() {
+        command_ = getDefaultInstance().getCommand();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string command = 1;</code>
+       * @param value The bytes for command to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCommandBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        command_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:raft.ClientRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:raft.ClientRequest)
+    private static final RaftRPC.ClientRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new RaftRPC.ClientRequest();
+    }
+
+    public static RaftRPC.ClientRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ClientRequest>
+        PARSER = new com.google.protobuf.AbstractParser<ClientRequest>() {
+      @java.lang.Override
+      public ClientRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<ClientRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ClientRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public RaftRPC.ClientRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ClientReplyOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:raft.ClientReply)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>bool is_leader = 1;</code>
+     * @return The isLeader.
+     */
+    boolean getIsLeader();
+
+    /**
+     * <code>uint32 leader_id = 2;</code>
+     * @return The leaderId.
+     */
+    int getLeaderId();
+  }
+  /**
+   * Protobuf type {@code raft.ClientReply}
+   */
+  public static final class ClientReply extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:raft.ClientReply)
+      ClientReplyOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ClientReply.newBuilder() to construct.
+    private ClientReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ClientReply() {
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new ClientReply();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return RaftRPC.internal_static_raft_ClientReply_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return RaftRPC.internal_static_raft_ClientReply_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              RaftRPC.ClientReply.class, RaftRPC.ClientReply.Builder.class);
+    }
+
+    public static final int IS_LEADER_FIELD_NUMBER = 1;
+    private boolean isLeader_ = false;
+    /**
+     * <code>bool is_leader = 1;</code>
+     * @return The isLeader.
+     */
+    @java.lang.Override
+    public boolean getIsLeader() {
+      return isLeader_;
+    }
+
+    public static final int LEADER_ID_FIELD_NUMBER = 2;
+    private int leaderId_ = 0;
+    /**
+     * <code>uint32 leader_id = 2;</code>
+     * @return The leaderId.
+     */
+    @java.lang.Override
+    public int getLeaderId() {
+      return leaderId_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (isLeader_ != false) {
+        output.writeBool(1, isLeader_);
+      }
+      if (leaderId_ != 0) {
+        output.writeUInt32(2, leaderId_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (isLeader_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(1, isLeader_);
+      }
+      if (leaderId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(2, leaderId_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof RaftRPC.ClientReply)) {
+        return super.equals(obj);
+      }
+      RaftRPC.ClientReply other = (RaftRPC.ClientReply) obj;
+
+      if (getIsLeader()
+          != other.getIsLeader()) return false;
+      if (getLeaderId()
+          != other.getLeaderId()) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + IS_LEADER_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getIsLeader());
+      hash = (37 * hash) + LEADER_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getLeaderId();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static RaftRPC.ClientReply parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static RaftRPC.ClientReply parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static RaftRPC.ClientReply parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static RaftRPC.ClientReply parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static RaftRPC.ClientReply parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static RaftRPC.ClientReply parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static RaftRPC.ClientReply parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static RaftRPC.ClientReply parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static RaftRPC.ClientReply parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static RaftRPC.ClientReply parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static RaftRPC.ClientReply parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static RaftRPC.ClientReply parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(RaftRPC.ClientReply prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code raft.ClientReply}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:raft.ClientReply)
+        RaftRPC.ClientReplyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return RaftRPC.internal_static_raft_ClientReply_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return RaftRPC.internal_static_raft_ClientReply_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                RaftRPC.ClientReply.class, RaftRPC.ClientReply.Builder.class);
+      }
+
+      // Construct using ProtoBuf.RaftRPC.ClientReply.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        isLeader_ = false;
+        leaderId_ = 0;
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return RaftRPC.internal_static_raft_ClientReply_descriptor;
+      }
+
+      @java.lang.Override
+      public RaftRPC.ClientReply getDefaultInstanceForType() {
+        return RaftRPC.ClientReply.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public RaftRPC.ClientReply build() {
+        RaftRPC.ClientReply result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public RaftRPC.ClientReply buildPartial() {
+        RaftRPC.ClientReply result = new RaftRPC.ClientReply(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(RaftRPC.ClientReply result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.isLeader_ = isLeader_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.leaderId_ = leaderId_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof RaftRPC.ClientReply) {
+          return mergeFrom((RaftRPC.ClientReply)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(RaftRPC.ClientReply other) {
+        if (other == RaftRPC.ClientReply.getDefaultInstance()) return this;
+        if (other.getIsLeader() != false) {
+          setIsLeader(other.getIsLeader());
+        }
+        if (other.getLeaderId() != 0) {
+          setLeaderId(other.getLeaderId());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                isLeader_ = input.readBool();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 8
+              case 16: {
+                leaderId_ = input.readUInt32();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 16
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private boolean isLeader_ ;
+      /**
+       * <code>bool is_leader = 1;</code>
+       * @return The isLeader.
+       */
+      @java.lang.Override
+      public boolean getIsLeader() {
+        return isLeader_;
+      }
+      /**
+       * <code>bool is_leader = 1;</code>
+       * @param value The isLeader to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsLeader(boolean value) {
+        
+        isLeader_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool is_leader = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIsLeader() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        isLeader_ = false;
+        onChanged();
+        return this;
+      }
+
+      private int leaderId_ ;
+      /**
+       * <code>uint32 leader_id = 2;</code>
+       * @return The leaderId.
+       */
+      @java.lang.Override
+      public int getLeaderId() {
+        return leaderId_;
+      }
+      /**
+       * <code>uint32 leader_id = 2;</code>
+       * @param value The leaderId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLeaderId(int value) {
+        
+        leaderId_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint32 leader_id = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearLeaderId() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        leaderId_ = 0;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:raft.ClientReply)
+    }
+
+    // @@protoc_insertion_point(class_scope:raft.ClientReply)
+    private static final RaftRPC.ClientReply DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new RaftRPC.ClientReply();
+    }
+
+    public static RaftRPC.ClientReply getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ClientReply>
+        PARSER = new com.google.protobuf.AbstractParser<ClientReply>() {
+      @java.lang.Override
+      public ClientReply parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<ClientReply> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ClientReply> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public RaftRPC.ClientReply getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface LogEntryOrBuilder extends
       // @@protoc_insertion_point(interface_extends:raft.LogEntry)
       com.google.protobuf.MessageOrBuilder {
@@ -5569,6 +6676,16 @@ public final class RaftRPC {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_raft_Cluster_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_raft_ClientRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_raft_ClientRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_raft_ClientReply_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_raft_ClientReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_raft_LogEntry_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -5605,22 +6722,26 @@ public final class RaftRPC {
       "\n\rRaftRPC.proto\022\004raft\"7\n\006Server\022\021\n\tserve" +
       "r_id\030\001 \001(\r\022\014\n\004host\030\002 \001(\t\022\014\n\004port\030\003 \001(\r\"(" +
       "\n\007Cluster\022\035\n\007servers\030\001 \003(\0132\014.raft.Server" +
-      "\"8\n\010LogEntry\022\014\n\004term\030\001 \001(\004\022\r\n\005index\030\002 \001(" +
-      "\004\022\017\n\007command\030\003 \001(\t\"j\n\013VoteRequest\022\026\n\016can" +
-      "didate_term\030\001 \001(\004\022\024\n\014candidate_id\030\002 \001(\r\022" +
-      "\026\n\016last_log_index\030\003 \001(\004\022\025\n\rlast_log_term" +
-      "\030\004 \001(\004\"7\n\tVoteReply\022\024\n\014current_term\030\001 \001(" +
-      "\004\022\024\n\014vote_granted\030\002 \001(\010\"\251\001\n\024AppendEntrie" +
-      "sRequest\022\023\n\013leader_term\030\001 \001(\004\022\021\n\tleader_" +
-      "id\030\002 \001(\r\022\026\n\016prev_log_index\030\003 \001(\004\022\025\n\rprev" +
-      "_log_term\030\004 \001(\004\022#\n\013log_entries\030\005 \003(\0132\016.r" +
-      "aft.LogEntry\022\025\n\rleader_commit\030\006 \001(\004\";\n\022A" +
-      "ppendEntriesReply\022\024\n\014current_term\030\001 \001(\004\022" +
-      "\017\n\007success\030\002 \001(\0102\223\001\n\017RaftNodeService\0226\n\016" +
-      "RequestVoteRPC\022\021.raft.VoteRequest\032\017.raft" +
-      ".VoteReply\"\000\022H\n\020AppendEntriesRPC\022\032.raft." +
-      "AppendEntriesRequest\032\030.raft.AppendEntrie" +
-      "sReplyB\023\n\010ProtoBufB\007RaftRPCb\006proto3"
+      "\" \n\rClientRequest\022\017\n\007command\030\001 \001(\t\"3\n\013Cl" +
+      "ientReply\022\021\n\tis_leader\030\001 \001(\010\022\021\n\tleader_i" +
+      "d\030\002 \001(\r\"8\n\010LogEntry\022\014\n\004term\030\001 \001(\004\022\r\n\005ind" +
+      "ex\030\002 \001(\004\022\017\n\007command\030\003 \001(\t\"j\n\013VoteRequest" +
+      "\022\026\n\016candidate_term\030\001 \001(\004\022\024\n\014candidate_id" +
+      "\030\002 \001(\r\022\026\n\016last_log_index\030\003 \001(\004\022\025\n\rlast_l" +
+      "og_term\030\004 \001(\004\"7\n\tVoteReply\022\024\n\014current_te" +
+      "rm\030\001 \001(\004\022\024\n\014vote_granted\030\002 \001(\010\"\251\001\n\024Appen" +
+      "dEntriesRequest\022\023\n\013leader_term\030\001 \001(\004\022\021\n\t" +
+      "leader_id\030\002 \001(\r\022\026\n\016prev_log_index\030\003 \001(\004\022" +
+      "\025\n\rprev_log_term\030\004 \001(\004\022#\n\013log_entries\030\005 " +
+      "\003(\0132\016.raft.LogEntry\022\025\n\rleader_commit\030\006 \001" +
+      "(\004\";\n\022AppendEntriesReply\022\024\n\014current_term" +
+      "\030\001 \001(\004\022\017\n\007success\030\002 \001(\0102\321\001\n\017RaftNodeServ" +
+      "ice\0226\n\016RequestVoteRPC\022\021.raft.VoteRequest" +
+      "\032\017.raft.VoteReply\"\000\022H\n\020AppendEntriesRPC\022" +
+      "\032.raft.AppendEntriesRequest\032\030.raft.Appen" +
+      "dEntriesReply\022<\n\020ClientRequestRPC\022\023.raft" +
+      ".ClientRequest\032\021.raft.ClientReply\"\000B\023\n\010P" +
+      "rotoBufB\007RaftRPCb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -5638,32 +6759,44 @@ public final class RaftRPC {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_raft_Cluster_descriptor,
         new java.lang.String[] { "Servers", });
-    internal_static_raft_LogEntry_descriptor =
+    internal_static_raft_ClientRequest_descriptor =
       getDescriptor().getMessageTypes().get(2);
+    internal_static_raft_ClientRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_raft_ClientRequest_descriptor,
+        new java.lang.String[] { "Command", });
+    internal_static_raft_ClientReply_descriptor =
+      getDescriptor().getMessageTypes().get(3);
+    internal_static_raft_ClientReply_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_raft_ClientReply_descriptor,
+        new java.lang.String[] { "IsLeader", "LeaderId", });
+    internal_static_raft_LogEntry_descriptor =
+      getDescriptor().getMessageTypes().get(4);
     internal_static_raft_LogEntry_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_raft_LogEntry_descriptor,
         new java.lang.String[] { "Term", "Index", "Command", });
     internal_static_raft_VoteRequest_descriptor =
-      getDescriptor().getMessageTypes().get(3);
+      getDescriptor().getMessageTypes().get(5);
     internal_static_raft_VoteRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_raft_VoteRequest_descriptor,
         new java.lang.String[] { "CandidateTerm", "CandidateId", "LastLogIndex", "LastLogTerm", });
     internal_static_raft_VoteReply_descriptor =
-      getDescriptor().getMessageTypes().get(4);
+      getDescriptor().getMessageTypes().get(6);
     internal_static_raft_VoteReply_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_raft_VoteReply_descriptor,
         new java.lang.String[] { "CurrentTerm", "VoteGranted", });
     internal_static_raft_AppendEntriesRequest_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_raft_AppendEntriesRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_raft_AppendEntriesRequest_descriptor,
         new java.lang.String[] { "LeaderTerm", "LeaderId", "PrevLogIndex", "PrevLogTerm", "LogEntries", "LeaderCommit", });
     internal_static_raft_AppendEntriesReply_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_raft_AppendEntriesReply_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_raft_AppendEntriesReply_descriptor,

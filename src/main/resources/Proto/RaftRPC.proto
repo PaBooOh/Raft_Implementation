@@ -15,6 +15,15 @@ message Cluster {
     repeated Server servers = 1;
 }
 
+message ClientRequest {
+    string command = 1;
+}
+
+message ClientReply {
+    bool is_leader = 1;
+    uint32 leader_id = 2;
+}
+
 // Define entity for Entity.StateMachine and appendEntriesRPC method
 message LogEntry {
     uint64 term = 1;
@@ -52,8 +61,9 @@ message AppendEntriesReply {
     bool success = 2; // true if follower contained entry matching prevLogIndex and prevLogTerm
 };
 
-// Services
+// Raft Services
 service RaftNodeService {
     rpc RequestVoteRPC(VoteRequest) returns (VoteReply) {};
     rpc AppendEntriesRPC(AppendEntriesRequest) returns (AppendEntriesReply);
+    rpc ClientRequestRPC(ClientRequest) returns (ClientReply) {}; // for remote client only
 }
