@@ -35,9 +35,13 @@ We implemented the crucial parts of Raft (not fully). They are leader election, 
 
 1. Use __git clone__ command that clones our project to local file
 2. (Recommended) run raft.sh to observe leader election
-```chmod u+x raft.sh 
-chmod u+x raft_start.sh
-raft.sh```
+
+    ```shell
+    chmod u+x raft.sh 
+    chmod u+x raft_start.sh
+    raft.sh
+    ```
+
 (Not recommended) or ... manually deploy, say three, RaftServers in three separate cloud nodes by using the command below
 > mvn compile exec:java -Dexec.mainClass="com.raft.Main.ServerTest" -Dexec.args="CLUSTER LOCALSERVER"   
 
