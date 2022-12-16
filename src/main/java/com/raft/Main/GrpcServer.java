@@ -12,7 +12,6 @@ public class GrpcServer {
     public GrpcServer(int port, RaftNodeService raftNodeService)
     {
         grpcServer = ServerBuilder.forPort(port)
-                // 将具体实现的服务添加到gRPC服务中
                 .addService(raftNodeService)
                 .build();
     }

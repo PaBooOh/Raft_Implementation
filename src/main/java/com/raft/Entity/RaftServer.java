@@ -93,6 +93,7 @@ public class RaftServer {
     // Multi-threads is applied to issue multiple requestVote RPCs to other raft nodes.
     private void requestVoteFromOtherServers()
     {
+        long startTime = System.currentTimeMillis();
         lock.lock();
         try {
             setCurrentTerm(getCurrentTerm() + 1);
@@ -116,6 +117,15 @@ public class RaftServer {
             if (targetServerId == localServer.getServerId())
                 continue;
             executorService.submit(() -> issueRequestVoteRPC(targetServerId, targetServerHost, targetServerPort));
+        }
+
+        long endTime = System.currentTimeMillis();
+        if(getNodeRole() == NodeRole.LEADER)
+        {
+            long durationTime = endTime - startTime;
+            LOGGER.info("[{}] Leader Election >>> Duration of the leader election={} ms",
+                    getNodeRole().toString(),
+                    durationTime);
         }
     }
 

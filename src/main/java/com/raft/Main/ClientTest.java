@@ -51,8 +51,20 @@ public class ClientTest {
         // Redirect, if the server just connected to is not the leader server.
         if(!isLeader && leaderId != 0)
         {
+            String leaderHost = randomServer.getHost();
+            int leaderPort = randomServer.getPort();
+
+            for(RaftRPC.Server server: cluster)
+            {
+                if(server.getServerId() == leaderId)
+                {
+                    leaderHost = server.getHost();
+                    leaderPort = server.getPort();
+                    break;
+                }
+            }
             LOGGER.info("Client request [Redirect]>>> The server belonging to the raft cluster is not leader. Redirecting to the leader...");
-            ManagedChannel leaderChannel = ManagedChannelBuilder.forAddress(randomServer.getHost(), randomServer.getPort())
+            ManagedChannel leaderChannel = ManagedChannelBuilder.forAddress(leaderHost, leaderPort)
                     .usePlaintext()
                     .build();
             RaftNodeServiceGrpc.RaftNodeServiceBlockingStub newBlockingStub = RaftNodeServiceGrpc.newBlockingStub(leaderChannel);
@@ -68,4 +80,5 @@ public class ClientTest {
         LOGGER.info("Client request [Success]>>> This command (request) has been stored in servers' log and has been applied to statemachine.");
         System.exit(0);
     }
+
 }
