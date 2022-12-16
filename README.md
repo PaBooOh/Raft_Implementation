@@ -55,3 +55,4 @@ the local node(LOCALSERVER) must be part of this cluster.
 >  mvn compile exec:java -Dexec.mainClass="com.raft.Main.ClientTest" -Dexec.args="node102:2144,node103:2144,node105:2144 hello"
 
 where node102:2144,node103:2144,node105:2144 stands for the cluster that the client want to connect to, hello is a command.
+
