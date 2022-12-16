@@ -201,8 +201,6 @@ public class RaftServer {
                             receiverTerm, getVotedCount());
                 }
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         } finally {
             lock.unlock();
         }
