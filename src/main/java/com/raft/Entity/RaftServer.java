@@ -189,7 +189,7 @@ public class RaftServer {
                         }
 
                         this.electionEndTime = System.currentTimeMillis();
-                        long durationTime = this.electionStartTime - this.electionEndTime;
+                        long durationTime = this.electionEndTime - this.electionStartTime;
                         LOGGER.info("[{}] Leader Election >>> Duration of the leader election={} ms",
                                 getNodeRole().toString(),
                                 durationTime);
