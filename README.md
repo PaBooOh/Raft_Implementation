@@ -26,7 +26,7 @@ We implemented the crucial parts of Raft (not fully). They are leader election, 
 | 3 | Cluster membership changes  | :x: |
 | 4 | Log compaction | :x: |
 | 5 | Snapshots installation | :x: |
-| 6 | Committing entries from previous terms | :heavy_check_mark: |
+| 6 | Committing entries from previous terms | :x: |
 | 7.1 | Leader crashes | :x: |
 | 7.2 | Follower crashes | :x: |
 | 7.3 | Candidate crashes | :x: |
@@ -34,10 +34,16 @@ We implemented the crucial parts of Raft (not fully). They are leader election, 
 ## How to run
 
 1. Use __git clone__ command that clones our project to local file
-2. (Recommended)
+2. (Recommended) run raft.sh to observe leader election
 2. (Not recommended) Deploy, say three, RaftServers in three separate cloud nodes by using the command below
-> mvn compile exec:java -Dexec.mainClass="com.raft.Main.ServerTest" -Dexec.args="CLUSTER LOCALSERVER"
+> mvn compile exec:java -Dexec.mainClass="com.raft.Main.ServerTest" -Dexec.args="CLUSTER LOCALSERVER"   
+
 For example:
 > mvn compile exec:java -Dexec.mainClass="com.raft.Main.ServerTest" -Dexec.args="node102:1234,node103:1234,node105:1234 node102:1234"
- mvn compile exec:java -Dexec.mainClass="com.raft.Main.ServerTest" -Dexec.args="node102:1234,node103:1234,node105:1234 node103:1234"
- mvn compile exec:java -Dexec.mainClass="com.raft.Main.ServerTest" -Dexec.args="node102:1234,node103:1234,node105:1234 node105:1234"
+> mvn compile exec:java -Dexec.mainClass="com.raft.Main.ServerTest" -Dexec.args="node102:1234,node103:1234,node105:1234 node103:1234"
+> mvn compile exec:java -Dexec.mainClass="com.raft.Main.ServerTest" -Dexec.args="node102:1234,node103:1234,node105:1234 node105:1234"
+
+3. In another cloud node, use the command below to simulate client and send a request (we set it in string format for simplicity) to cluster:
+>  mvn compile exec:java -Dexec.mainClass="com.raft.Main.ClientTest" -Dexec.args="node102:2144,node103:2144,node105:2144 hello"
+
+where node102:2144,node103:2144,node105:2144 stands for the cluster that the client want to connect to, hello is a command.
