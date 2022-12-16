@@ -140,6 +140,14 @@ public class RaftServer {
             RaftNodeServiceGrpc.RaftNodeServiceBlockingStub blockingStub = RaftNodeServiceGrpc.newBlockingStub(channel);
             RaftRPC.VoteRequest request = requestBuilder.build();
             RaftRPC.VoteReply reply = blockingStub.requestVoteRPC(request);
+            if(reply==null)
+            {
+                while (true)
+                {
+                    LOGGER.info("Waiting for other servers connected...");
+//                    RaftRPC.VoteReply newreply = RaftNodeServiceGrpc.newBlockingStub(channel).requestVoteRPC(request);
+                }
+            }
             long receiverTerm = reply.getCurrentTerm();
             long candidateTerm = getCurrentTerm();
             boolean receiverVoteGranted = reply.getVoteGranted();
