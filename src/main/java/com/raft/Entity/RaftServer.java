@@ -206,6 +206,13 @@ public class RaftServer {
     public void sendAppendEntriesToOtherServers(List<RaftRPC.LogEntry> logEntries)
     {
         // It is the first time that the new leader issue heartbeatRPCs (appendEntriesRPC with empty entry) to its followers
+        boolean isHeartbeat = logEntries.isEmpty();
+
+        if(!isHeartbeat)
+        {
+            setAckCount(0);
+        }
+
         for (RaftRPC.Server server: cluster.getServersList())
         {
             int targetServerId = server.getServerId();
@@ -216,7 +223,16 @@ public class RaftServer {
             executorService.submit(() -> issueAppendEntriesRPC(targetServerId, targetServerHost, targetServerPort, logEntries));
         }
 
-        if(logEntries.isEmpty())
+        if(getAckCount() > cluster.getServersCount()/2 && !isHeartbeat)
+        {
+            setAckCount(0);
+            LOGGER.info("[{}] Statemachine-[Applied] >>> Leader (ServerId={}, ServerTerm={}) got acknowledges from majority so apply this entry to its statemachine.",
+                    getNodeRole().toString(),
+                    localServer.getServerId(),
+                    getCurrentTerm());
+        }
+
+        if(isHeartbeat)
         {
             // reissue heartbeatRPCs
             if (heartbeatScheduledFuture != null && !heartbeatScheduledFuture.isDone())
@@ -270,11 +286,11 @@ public class RaftServer {
             RaftNodeServiceGrpc.RaftNodeServiceBlockingStub blockingStub = RaftNodeServiceGrpc.newBlockingStub(channel);
             RaftRPC.AppendEntriesReply reply = blockingStub.appendEntriesRPC(request);
             String rpcType = isHeartbeat ? "Heartbeat":"AppendEntries";
-            LOGGER.info("[{}] Normal operation-[{}] >>> Server (ServerId={}, ServerTerm={}) is issuing AppendEntriesRPCs to its followers ...",
-                    getNodeRole().toString(),
-                    rpcType,
-                    localServer.getServerId(),
-                    getCurrentTerm());
+//            LOGGER.info("[{}] Normal operation-[{}] >>> Server (ServerId={}, ServerTerm={}) is issuing AppendEntriesRPCs to its followers ...",
+//                    getNodeRole().toString(),
+//                    rpcType,
+//                    localServer.getServerId(),
+//                    getCurrentTerm());
             long receiverTerm = reply.getCurrentTerm();
             long leaderTerm = getCurrentTerm();
             boolean logMatchSafety = reply.getSuccess();
@@ -286,19 +302,25 @@ public class RaftServer {
                 if(logMatchSafety)
                 {
                     // 1 below stands for the size of entries[] (but here is a simple implementation that only appends one entry)
-                    LOGGER.info("[{}] Normal operation-[Send heartbeat] >>> Server (ServerId={}, ServerTerm={}) has appended an entry to a follower (ServerId={}, ServerTerm={})",
+                    LOGGER.info("[{}] Normal operation-[{}] >>> Server (ServerId={}, ServerTerm={}) has successfully issued the AppendEntriesRPCs to follower (ServerId={}, ServerTerm={})",
                             getNodeRole().toString(),
+                            rpcType,
                             localServer.getServerId(),
                             leaderTerm,
                             targetServerId,
                             receiverTerm);
+                    if(!isHeartbeat)
+                    {
+                        setAckCount(getAckCount()+1);
+                    }
 //                    logMatchMap.put(targetServerId, logMatchMap.get(targetServerId) + 1);
                 }
                 // Append unsuccessfully (Log Dis-matching)
                 else
                 {
-                    LOGGER.debug("[{}] Normal operation-[Send heartbeat] >>> Leader (ServerId={}, ServerTerm={})'s Log does not match with that of a follower (ServerId={}, ServerTerm={})",
+                    LOGGER.debug("[{}] Normal operation-[{}] >>> Leader (ServerId={}, ServerTerm={})'s Log does not match with that of a follower (ServerId={}, ServerTerm={})",
                             getNodeRole().toString(),
+                            rpcType,
                             localServer.getServerId(),
                             leaderTerm,
                             targetServerId,
