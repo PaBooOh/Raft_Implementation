@@ -26,9 +26,18 @@ public class StateMachine {
         this.logContainer.add(logEntry);
     }
 
-    public RaftRPC.LogEntry getLastLog()
+    private RaftRPC.LogEntry getLastLog()
     {
         return logContainer.get(logContainer.size() - 1);
+    }
+
+    public String getLastLogCommand()
+    {
+        if (!logContainer.isEmpty())
+        {
+            return getLastLog().getCommand();
+        }
+        return "None";
     }
 
     public long getLastLogIndex()

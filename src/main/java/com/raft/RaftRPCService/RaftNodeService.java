@@ -133,14 +133,14 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
                 {
                     if(isHeartbeat)
                     {
-                        LOGGER.info("[{}] AppendEntries(Heartbeat)-[SafetyCheck-Update] >>> Server (ServerId={}, ServerTerm={}) update its raft information ...",
+                        LOGGER.info("[{}] ReceiveHeartbeat-[SafetyCheck-Update] >>> Server (ServerId={}, ServerTerm={}) update its raft information ...",
                                 receiverRole.toString(),
                                 receiverId,
                                 receiverTerm);
                     }
                     else
                     {
-                        LOGGER.info("[{}] AppendEntries-[SafetyCheck-Update] >>> Server (ServerId={}, ServerTerm={}) update its raft information ...",
+                        LOGGER.info("[{}] ReceiveEntries-[SafetyCheck-Update] >>> Server (ServerId={}, ServerTerm={}) update its raft information ...",
                                 receiverRole.toString(),
                                 receiverId,
                                 receiverTerm);
@@ -151,7 +151,7 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
             receiver.setLeaderId(request.getLeaderId());
             if(leaderPrevLogIndex > receiverLastLogIndex)
             {
-                LOGGER.info("[{}] AppendEntries-[Rejection] >>> Follower (ServerId={}, ServerTerm={}) 's log does not match with leader's ...",
+                LOGGER.info("[{}] ReceiveEntries-[Rejection] >>> Server (ServerId={}, ServerTerm={}) 's log does not match with leader's ...",
                         receiverRole,
                         receiverId,
                         receiverTerm);
@@ -166,11 +166,11 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
             // Heartbeat
             if(isHeartbeat)
             {
-                LOGGER.info("[{}] AppendEntriesRPC-[Heartbeat] >>> Server (ServerId={}, ServerTerm={}) has received heartbeat. The latest entry's (Index={}, Term={}) command is <{}> ",
+                LOGGER.info("[{}] ReceiveHeartbeat [Success] >>> Server (ServerId={}, ServerTerm={}) has received heartbeat. The latest entry's (Index={}, Term={}) command is <{}> ",
                         receiverRole.toString(),
                         receiverId,
                         receiverTerm,
-                        receiver.getStateMachine().getLastLog().getCommand(),
+                        receiver.getStateMachine().getLastLogCommand(),
                         receiver.getStateMachine().getLastLogIndex(),
                         receiver.getStateMachine().getLastLogTerm());
             }
@@ -179,11 +179,11 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
             {
                 List<RaftRPC.LogEntry> logEntriesFromRequest = request.getLogEntriesList();
                 receiver.getStateMachine().getLogContainer().addAll(logEntriesFromRequest);
-                LOGGER.info("[{}] AppendEntriesRPC [Appended] >>> Server (ServerId={}, ServerTerm={}) has added entries provided. The latest entry's (Index={}, Term={}) command is <{}> ",
+                LOGGER.info("[{}] ReceiveEntries [Success] >>> Server (ServerId={}, ServerTerm={}) has added entries provided. The latest entry's (Index={}, Term={}) command is <{}> ",
                         receiverRole.toString(),
                         receiverId,
                         receiverTerm,
-                        receiver.getStateMachine().getLastLog().getCommand(),
+                        receiver.getStateMachine().getLastLogCommand(),
                         receiver.getStateMachine().getLastLogIndex(),
                         receiver.getStateMachine().getLastLogTerm());
             }

@@ -226,7 +226,8 @@ public class RaftServer {
         Random random = new Random();
         int minElectionTimeout = raftConfiguration.getElectionTimeout();
         int randomElectionTimeout = random.nextInt(2*minElectionTimeout+1) + minElectionTimeout;
-        LOGGER.info("Server timeout in {} ms >>> Server (ServerId={}, ServerTerm={}) will initiate election if not receive heartbeat",
+        LOGGER.info("[{}] ElectionTimeout ({} ms) >>> Server (ServerId={}, ServerTerm={}) will initiate election if not receive heartbeat",
+                getNodeRole().toString(),
                 randomElectionTimeout,
                 localServer.getServerId(),
                 getCurrentTerm());
