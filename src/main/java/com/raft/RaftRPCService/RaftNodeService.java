@@ -92,12 +92,15 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
             boolean isHeartbeat = request.getLogEntriesCount() == 0;
             long leaderPrevLogIndex = request.getPrevLogIndex();
             long receiverLastLogIndex = receiver.getStateMachine().getLastLogIndex();
+            String rpcType = isHeartbeat? "ReceiveHeartbeat":"ReceiveEntries";
 
+            // Safety check 01
             // Leader with smaller term is forced to step down
             if(leaderTerm < receiverTerm)
             {
-                LOGGER.info("[{}] AppendEntries(Heartbeat)-[SafetyCheck-StepDown] >>> Server (ServerId={}, ServerTerm={}) has greater term than leader's ({})",
+                LOGGER.info("[{}] {}-[SafetyCheck-StepDown] >>> Server (ServerId={}, ServerTerm={}) has greater term than leader's ({})",
                         receiverRole.toString(),
+                        rpcType,
                         receiverId,
                         receiverTerm,
                         leaderTerm);
@@ -109,50 +112,27 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
                 responseObserver.onCompleted();
                 return;
             }
-            // Step down if receiver is either candidate or leader
+            // Step down if receiver is either candidate or leader, while for followers, they need to step down as well (but just update the info itself)
             else
             {
-                if(receiverRole == NodeRole.CANDIDATE)
+                if(receiverRole == NodeRole.CANDIDATE || receiverRole == NodeRole.LEADER)
                 {
-                    if(isHeartbeat)
-                    {
-                        LOGGER.info("[{}] ReceiveHeartbeat-[SafetyCheck-StepDown] >>> Server (ServerId={}, ServerTerm={}) stepping down ... since a new leader has arisen",
-                                receiverRole,
-                                receiverId,
-                                receiverTerm);
-                    }
-                    else
-                    {
-                        LOGGER.info("[{}] ReceiveEntries-[SafetyCheck-StepDown] >>> Server (ServerId={}, ServerTerm={}) stepping down ... since a new leader has arisen",
-                                receiverRole,
-                                receiverId,
-                                receiverTerm);
-                    }
-                }
-                else
-                {
-                    if(isHeartbeat)
-                    {
-                        LOGGER.info("[{}] ReceiveHeartbeat-[SafetyCheck-Update] >>> Server (ServerId={}, ServerTerm={}) update its raft information ...",
-                                receiverRole.toString(),
-                                receiverId,
-                                receiverTerm);
-                    }
-                    else
-                    {
-                        LOGGER.info("[{}] ReceiveEntries-[SafetyCheck-Update] >>> Server (ServerId={}, ServerTerm={}) update its raft information ...",
-                                receiverRole.toString(),
-                                receiverId,
-                                receiverTerm);
-                    }
+                    LOGGER.info("[{}] {}-[SafetyCheck-StepDown] >>> Server (ServerId={}, ServerTerm={}) is stepping down, since a new leader has arisen.",
+                            receiverRole,
+                            rpcType,
+                            receiverId,
+                            receiverTerm);
                 }
                 receiver.stepDown(leaderTerm);
             }
+            // Agree with the leader's RPC
             receiver.setLeaderId(request.getLeaderId());
+            // Safety check 02
             if(leaderPrevLogIndex > receiverLastLogIndex)
             {
-                LOGGER.info("[{}] ReceiveEntries-[Rejection] >>> Server (ServerId={}, ServerTerm={}) 's log does not match with leader's ...",
+                LOGGER.info("[{}] {}-[Mismatch] >>> Server (ServerId={}, ServerTerm={}) 's log does not match that of leader.",
                         receiverRole,
+                        rpcType,
                         receiverId,
                         receiverTerm);
                 responseBuilder
@@ -166,8 +146,9 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
             // Heartbeat
             if(isHeartbeat)
             {
-                LOGGER.info("[{}] ReceiveHeartbeat [Success] >>> Server (ServerId={}, ServerTerm={}) has received heartbeat. The latest entry's (Index={}, Term={}) command is <{}> ",
+                LOGGER.info("[{}] {}-[Success] >>> Server (ServerId={}, ServerTerm={}) has received heartbeat. The latest entry's (Index={}, Term={}) command is <{}> ",
                         receiverRole.toString(),
+                        rpcType,
                         receiverId,
                         receiverTerm,
                         receiver.getStateMachine().getLastLogIndex(),
@@ -179,8 +160,9 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
             {
                 List<RaftRPC.LogEntry> logEntriesFromRequest = request.getLogEntriesList();
                 receiver.getStateMachine().getLogContainer().addAll(logEntriesFromRequest);
-                LOGGER.info("[{}] ReceiveEntries [Success] >>> Server (ServerId={}, ServerTerm={}) has added entries provided. The latest entry's (Index={}, Term={}) command is <{}> ",
+                LOGGER.info("[{}] {}-[Success] >>> Server (ServerId={}, ServerTerm={}) has added entries provided. The latest entry's (Index={}, Term={}) command is <{}> ",
                         receiverRole.toString(),
+                        rpcType,
                         receiverId,
                         receiverTerm,
                         receiver.getStateMachine().getLastLogIndex(),

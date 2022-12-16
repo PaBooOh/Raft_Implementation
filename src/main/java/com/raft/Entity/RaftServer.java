@@ -119,14 +119,14 @@ public class RaftServer {
 
     private void issueRequestVoteRPC(int targetServerId, String targetServerHost, int targetServerPort)
     {
-        LOGGER.info("[{}] Leader Election >>> Candidate (ServerId={}, ServerHost={}, ServerPort={}) issued RequestVoteRPC to a server (ServerId={}, ServerHost={}, ServerPort={})",
-                getNodeRole().toString(),
-                localServer.getServerId(),
-                localServer.getHost(),
-                localServer.getPort(),
-                targetServerId,
-                targetServerHost,
-                targetServerPort);
+//        LOGGER.info("[{}] Leader Election >>> Candidate (ServerId={}, ServerHost={}, ServerPort={}) issued RequestVoteRPC to a server (ServerId={}, ServerHost={}, ServerPort={})",
+//                getNodeRole().toString(),
+//                localServer.getServerId(),
+//                localServer.getHost(),
+//                localServer.getPort(),
+//                targetServerId,
+//                targetServerHost,
+//                targetServerPort);
         RaftRPC.VoteRequest.Builder requestBuilder = RaftRPC.VoteRequest.newBuilder();
         RaftRPC.VoteReply reply = null;
         lock.lock();
@@ -265,7 +265,7 @@ public class RaftServer {
 
             RaftNodeServiceGrpc.RaftNodeServiceBlockingStub blockingStub = RaftNodeServiceGrpc.newBlockingStub(channel);
             RaftRPC.AppendEntriesReply reply = blockingStub.appendEntriesRPC(request);
-            LOGGER.info("[{}] Normal operation-[Send heartbeat] >>> Server (ServerId={}, ServerTerm={}) issued HeartbeatRPCs to its followers ...",
+            LOGGER.info("[{}] Normal operation-[Send heartbeat] >>> Server (ServerId={}, ServerTerm={}) is issuing HeartbeatRPCs to its followers ...",
                     getNodeRole().toString(),
                     localServer.getServerId(),
                     getCurrentTerm());

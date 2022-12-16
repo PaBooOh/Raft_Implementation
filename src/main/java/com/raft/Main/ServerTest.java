@@ -23,21 +23,20 @@ public class ServerTest {
     public static void main(String[] args) throws IOException, InterruptedException {
         if (args.length != 2)
         {
-            System.out.print("Usage: ./run_server.sh CLUSTER CURRENT_NODE\n");
+            System.out.print("Using maven command like this: mvn compile exec:java -Dexec.mainClass=\"com.raft.Main.ServerTest\" -Dexec.args=\"cluster local_server\" \n");
             System.exit(-1);
         }
-
-//        String dataPath = args[0];
-        // "host1:port1,host2:port2,host3:port3"
+        // Start the command below in three separate servers where 'LOCALSERVER' must be covered in 'CLUSTER' and 'CLUSTER' must be given in the same order for the three servers.
+        // "mvn compile exec:java -Dexec.mainClass="com.raft.Main.ServerTest" -Dexec.args="node102:1234,node103:1234,node106:1234 node102:1234""
         String clusterString = args[0];
         String localServerString = args[1];
-        LOGGER.info("Building cluster >>> Starting a server (" + localServerString + ") in cluster(" + clusterString + ")");
+        LOGGER.info("Building cluster-[Init] >>> Try starting a server (" + localServerString + ") in cluster(" + clusterString + ")");
         String[] serversString = clusterString.split(",");
         RaftRPC.Server localServer = getServer(serversString, localServerString);
 
         // Split and parse cluster into separate servers
         List<RaftRPC.Server> cluster = new ArrayList<>();
-        List<RaftRPC.Server> peer = new ArrayList<>();
+        List<RaftRPC.Server> peer = new ArrayList<>(); // for check other servers are all available
         for (String serverString : serversString)
         {
             // build cluster
@@ -57,7 +56,7 @@ public class ServerTest {
         // Build RPCServer to provide services
         GrpcServer grpcServer = new GrpcServer(localServer.getPort(), raftNodeService);
         grpcServer.startGrpcServer();
-        // Wait for the cluster built completely
+        // Wait for the cluster (or other servers) built completely
         waitPeersAvailable(peer);
         // Build RaftServer as client that communicates with other RaftServers
         raftServer.buildRaftServer();
@@ -76,13 +75,13 @@ public class ServerTest {
             // Try to reconnect
             while(channelState != ConnectivityState.READY)
             {
-                LOGGER.info("Connection State={}, waiting for Server={} joining", channel.getState(true), targetServerHost);
-                TimeUnit.SECONDS.sleep(1);
+                LOGGER.info("Building cluster-[Waiting] >>> Connection State={}, waiting for Server={} joining", channel.getState(true), targetServerHost);
+                TimeUnit.SECONDS.sleep(3);
                 channelState = channel.getState(true);
             }
-            LOGGER.info("Connection State={}, connected to Server={}", channel.getState(true), targetServerHost);
+            LOGGER.info("Building cluster-[Connected] >>> Connection State={}, connected to Server={}", channel.getState(true), targetServerHost);
         }
-        LOGGER.info("Cluster built successfully!");
+        LOGGER.info("Building cluster-[Success] >>> Cluster built successfully!");
     }
 
 
