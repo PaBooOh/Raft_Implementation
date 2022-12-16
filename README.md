@@ -41,7 +41,11 @@ We implemented the crucial parts of Raft (not fully). They are leader election, 
 
 For example:
 > mvn compile exec:java -Dexec.mainClass="com.raft.Main.ServerTest" -Dexec.args="node102:1234,node103:1234,node105:1234 node102:1234"
+
+
 > mvn compile exec:java -Dexec.mainClass="com.raft.Main.ServerTest" -Dexec.args="node102:1234,node103:1234,node105:1234 node103:1234"
+
+
 > mvn compile exec:java -Dexec.mainClass="com.raft.Main.ServerTest" -Dexec.args="node102:1234,node103:1234,node105:1234 node105:1234"
 
 where node102:1234,node103:1234,node105:1234 represents raft cluster, and node102:1234 is the current (local) node you are in. Note that
