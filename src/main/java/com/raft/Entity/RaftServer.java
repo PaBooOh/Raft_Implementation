@@ -277,7 +277,7 @@ public class RaftServer {
                 if(logMatchSafety)
                 {
                     // 1 below stands for the size of entries[] (but here is a simple implementation that only appends one entry)
-                    LOGGER.info("[{}] Normal operation-[Send heartbeat] >>> Leader (ServerId={}, ServerTerm={}) has appended an entry to a follower (ServerId={}, ServerTerm={})",
+                    LOGGER.info("[{}] Normal operation-[Send heartbeat] >>> Server (ServerId={}, ServerTerm={}) has appended an entry to a follower (ServerId={}, ServerTerm={})",
                             getNodeRole().toString(),
                             localServer.getServerId(),
                             leaderTerm,

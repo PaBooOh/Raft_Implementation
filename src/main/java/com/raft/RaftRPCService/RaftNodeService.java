@@ -170,9 +170,9 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
                         receiverRole.toString(),
                         receiverId,
                         receiverTerm,
-                        receiver.getStateMachine().getLastLogCommand(),
                         receiver.getStateMachine().getLastLogIndex(),
-                        receiver.getStateMachine().getLastLogTerm());
+                        receiver.getStateMachine().getLastLogTerm(),
+                        receiver.getStateMachine().getLastLogCommand());
             }
             // AppendEntries, added into local LogContainer (stored in the in-memory for simplicity)
             else
@@ -183,9 +183,9 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
                         receiverRole.toString(),
                         receiverId,
                         receiverTerm,
-                        receiver.getStateMachine().getLastLogCommand(),
                         receiver.getStateMachine().getLastLogIndex(),
-                        receiver.getStateMachine().getLastLogTerm());
+                        receiver.getStateMachine().getLastLogTerm(),
+                        receiver.getStateMachine().getLastLogCommand());
             }
             responseBuilder
                     .setCurrentTerm(receiverTerm)
