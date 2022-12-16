@@ -138,9 +138,10 @@ public class RaftServer {
                     .usePlaintext()
                     .build();
             RaftNodeServiceGrpc.RaftNodeServiceBlockingStub blockingStub = RaftNodeServiceGrpc.newBlockingStub(channel);
+            LOGGER.info("Test {}", channel.getState(true));
             RaftRPC.VoteRequest request = requestBuilder.build();
             RaftRPC.VoteReply reply = blockingStub.requestVoteRPC(request);
-            LOGGER.info("Test {}", reply.getCurrentTerm());
+
             if(reply==null)
             {
                 while (true)
