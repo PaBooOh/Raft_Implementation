@@ -137,6 +137,7 @@ public class RaftServer {
             ManagedChannel channel = ManagedChannelBuilder.forAddress(targetServerHost, targetServerPort)
                     .usePlaintext()
                     .build();
+            channel.awaitTermination(60, TimeUnit.SECONDS);
             RaftNodeServiceGrpc.RaftNodeServiceBlockingStub blockingStub = RaftNodeServiceGrpc.newBlockingStub(channel);
             LOGGER.info("Test {}", channel.isTerminated());
             RaftRPC.VoteRequest request = requestBuilder.build();
@@ -201,6 +202,8 @@ public class RaftServer {
                             receiverTerm, getVotedCount());
                 }
             }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             lock.unlock();
         }
