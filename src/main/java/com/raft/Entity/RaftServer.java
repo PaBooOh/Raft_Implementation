@@ -35,6 +35,8 @@ public class RaftServer {
     private int serverId;
     private int votedCount;
     private int ackCount;
+    private long electionStartTime = 0L;
+    private long electionEndTime = 0;
 
     // Persistent
     private long currentTerm;
@@ -93,7 +95,7 @@ public class RaftServer {
     // Multi-threads is applied to issue multiple requestVote RPCs to other raft nodes.
     private void requestVoteFromOtherServers()
     {
-        long startTime = System.currentTimeMillis();
+        this.electionStartTime = System.currentTimeMillis();
         lock.lock();
         try {
             setCurrentTerm(getCurrentTerm() + 1);
@@ -117,15 +119,6 @@ public class RaftServer {
             if (targetServerId == localServer.getServerId())
                 continue;
             executorService.submit(() -> issueRequestVoteRPC(targetServerId, targetServerHost, targetServerPort));
-        }
-
-        long endTime = System.currentTimeMillis();
-        if(getNodeRole() == NodeRole.LEADER)
-        {
-            long durationTime = endTime - startTime;
-            LOGGER.info("[{}] Leader Election >>> Duration of the leader election={} ms",
-                    getNodeRole().toString(),
-                    durationTime);
         }
     }
 
@@ -194,6 +187,12 @@ public class RaftServer {
                         if (electionScheduledFuture != null && !electionScheduledFuture.isDone()) {
                             electionScheduledFuture.cancel(true);
                         }
+
+                        this.electionEndTime = System.currentTimeMillis();
+                        long durationTime = this.electionStartTime - this.electionEndTime;
+                        LOGGER.info("[{}] Leader Election >>> Duration of the leader election={} ms",
+                                getNodeRole().toString(),
+                                durationTime);
                         sendAppendEntriesToOtherServers(new ArrayList<>()); // Leader starts normal operation (empty entries)
                     }
                 }
