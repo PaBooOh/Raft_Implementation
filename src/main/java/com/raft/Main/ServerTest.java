@@ -47,9 +47,9 @@ public class ServerTest {
         // build RPCServer to provide service and start RPCServer
         GrpcServer grpcServer = new GrpcServer(localServer.getPort(), raftNodeService);
         grpcServer.startGrpcServer();
-        ManagedChannel channel = ManagedChannelBuilder.forAddress(targetServerHost, targetServerPort)
-                .usePlaintext()
-                .build();
+//        ManagedChannel channel = ManagedChannelBuilder.forAddress(targetServerHost, targetServerPort)
+//                .usePlaintext()
+//                .build();
 
         raftServer.buildRaftServer();
     }
