@@ -82,6 +82,7 @@ public class ServerTest {
             LOGGER.info("Building cluster-[Connected] >>> Connection State={}, connected to Server={}", channel.getState(true), targetServerHost);
         }
         LOGGER.info("Building cluster-[Success] >>> Cluster built successfully!");
+        TimeUnit.SECONDS.sleep(2);
     }
 
 
