@@ -57,12 +57,15 @@ public class ClientTest {
                     .build();
             RaftNodeServiceGrpc.RaftNodeServiceBlockingStub newBlockingStub = RaftNodeServiceGrpc.newBlockingStub(leaderChannel);
             RaftRPC.ClientReply newReply = newBlockingStub.clientRequestRPC(request);
+            leaderChannel.shutdown();
         }
         if(leaderId == 0)
         {
             LOGGER.info("Client request [Failed]>>> Client is requesting a command to the raft cluster in which there is no leader elected currently. Please try again.");
             return;
         }
+        channel.shutdown();
         LOGGER.info("Client request [Success]>>> This command (request) has been stored in servers' log and has been applied to statemachine.");
+        System.exit(0);
     }
 }

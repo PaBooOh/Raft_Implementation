@@ -208,6 +208,8 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
                         .build();
                 List<RaftRPC.LogEntry> logEntries = new ArrayList<>();
                 logEntries.add(logEntry);
+                // Add entry to local state machine's log
+                receiver.getStateMachine().appendLogEntry(logEntry);
                 receiver.sendAppendEntriesToOtherServers(logEntries);
                 responseBuilder
                         .setIsLeader(true)
