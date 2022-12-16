@@ -138,18 +138,18 @@ public class RaftServer {
                     .usePlaintext()
                     .build();
             RaftNodeServiceGrpc.RaftNodeServiceBlockingStub blockingStub = RaftNodeServiceGrpc.newBlockingStub(channel);
-            LOGGER.info("Test {}", channel.getState(true));
+            LOGGER.info("Test {}", channel.isTerminated());
             RaftRPC.VoteRequest request = requestBuilder.build();
             RaftRPC.VoteReply reply = blockingStub.requestVoteRPC(request);
 
-            if(reply==null)
-            {
-                while (true)
-                {
-                    LOGGER.info("Waiting for other servers connected...");
-//                    RaftRPC.VoteReply newreply = RaftNodeServiceGrpc.newBlockingStub(channel).requestVoteRPC(request);
-                }
-            }
+//            if(reply==null)
+//            {
+//                while (true)
+//                {
+//                    LOGGER.info("Waiting for other servers connected...");
+////                    RaftRPC.VoteReply newreply = RaftNodeServiceGrpc.newBlockingStub(channel).requestVoteRPC(request);
+//                }
+//            }
             long receiverTerm = reply.getCurrentTerm();
             long candidateTerm = getCurrentTerm();
             boolean receiverVoteGranted = reply.getVoteGranted();
@@ -283,7 +283,7 @@ public class RaftServer {
                             leaderTerm,
                             targetServerId,
                             receiverTerm);
-                    logMatchMap.put(targetServerId, logMatchMap.get(targetServerId) + 1);
+//                    logMatchMap.put(targetServerId, logMatchMap.get(targetServerId) + 1);
                 }
                 // Append unsuccessfully (Log Dis-matching)
                 else

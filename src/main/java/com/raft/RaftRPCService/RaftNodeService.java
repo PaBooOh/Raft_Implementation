@@ -116,14 +116,14 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
                 {
                     if(isHeartbeat)
                     {
-                        LOGGER.info("[{}] AppendEntries(Heartbeat)-[SafetyCheck-StepDown] >>> Server (ServerId={}, ServerTerm={}) stepping down ... since a new leader has arisen",
+                        LOGGER.info("[{}] ReceiveHeartbeat-[SafetyCheck-StepDown] >>> Server (ServerId={}, ServerTerm={}) stepping down ... since a new leader has arisen",
                                 receiverRole,
                                 receiverId,
                                 receiverTerm);
                     }
                     else
                     {
-                        LOGGER.info("[{}] AppendEntries-[SafetyCheck-StepDown] >>> Server (ServerId={}, ServerTerm={}) stepping down ... since a new leader has arisen",
+                        LOGGER.info("[{}] ReceiveEntries-[SafetyCheck-StepDown] >>> Server (ServerId={}, ServerTerm={}) stepping down ... since a new leader has arisen",
                                 receiverRole,
                                 receiverId,
                                 receiverTerm);
