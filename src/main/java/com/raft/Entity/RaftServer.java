@@ -138,7 +138,7 @@ public class RaftServer {
                     .usePlaintext()
                     .build();
             RaftNodeServiceGrpc.RaftNodeServiceBlockingStub blockingStub = RaftNodeServiceGrpc.newBlockingStub(channel);
-            LOGGER.info("Test {}", channel.isTerminated());
+            LOGGER.info("Connection={}, targetServerId={}", channel.getState(true).toString(), targetServerId);
             RaftRPC.VoteRequest request = requestBuilder.build();
             RaftRPC.VoteReply reply = blockingStub.requestVoteRPC(request);
 
@@ -260,7 +260,7 @@ public class RaftServer {
             ManagedChannel channel = ManagedChannelBuilder.forAddress(targetServerHost, targetServerPort)
                     .usePlaintext()
                     .build();
-            LOGGER.info("Connection={}", channel.getState(true).toString());
+
             RaftNodeServiceGrpc.RaftNodeServiceBlockingStub blockingStub = RaftNodeServiceGrpc.newBlockingStub(channel);
             RaftRPC.AppendEntriesReply reply = blockingStub.appendEntriesRPC(request);
             LOGGER.info("[{}] Normal operation-[Send heartbeat] >>> Server (ServerId={}, ServerTerm={}) issued HeartbeatRPCs to its followers ...",
