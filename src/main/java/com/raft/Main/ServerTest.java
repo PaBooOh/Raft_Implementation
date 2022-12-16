@@ -3,6 +3,8 @@ package com.raft.Main;
 import com.raft.Entity.RaftServer;
 import com.raft.ProtoBuf.RaftRPC;
 import com.raft.RaftRPCService.RaftNodeService;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +47,10 @@ public class ServerTest {
         // build RPCServer to provide service and start RPCServer
         GrpcServer grpcServer = new GrpcServer(localServer.getPort(), raftNodeService);
         grpcServer.startGrpcServer();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(targetServerHost, targetServerPort)
+                .usePlaintext()
+                .build();
+
         raftServer.buildRaftServer();
     }
 

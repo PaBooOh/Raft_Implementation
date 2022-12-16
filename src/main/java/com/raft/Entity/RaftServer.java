@@ -2,6 +2,7 @@ package com.raft.Entity;
 
 import com.raft.ProtoBuf.RaftNodeServiceGrpc;
 import com.raft.ProtoBuf.RaftRPC;
+import io.grpc.ConnectivityState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,6 +128,7 @@ public class RaftServer {
                 targetServerHost,
                 targetServerPort);
         RaftRPC.VoteRequest.Builder requestBuilder = RaftRPC.VoteRequest.newBuilder();
+        RaftRPC.VoteReply reply = null;
         lock.lock();
         try {
             requestBuilder.setCandidateId(localServer.getServerId())
@@ -138,10 +140,10 @@ public class RaftServer {
                     .usePlaintext()
                     .build();
             RaftNodeServiceGrpc.RaftNodeServiceBlockingStub blockingStub = RaftNodeServiceGrpc.newBlockingStub(channel);
-            LOGGER.info("Connection={}, targetServerId={}", channel.getState(true).toString(), targetServerId);
+            LOGGER.info("Connection={}, targetServerId={}", channel.getState(true), targetServerId);
             RaftRPC.VoteRequest request = requestBuilder.build();
-            RaftRPC.VoteReply reply = blockingStub.requestVoteRPC(request);
-
+            reply = blockingStub.requestVoteRPC(request);
+            LOGGER.info("Connection={}, targetServerId={}", channel.getState(true), targetServerId);
 //            if(reply==null)
 //            {
 //                while (true)
