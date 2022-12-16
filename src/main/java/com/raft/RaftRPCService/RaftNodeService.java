@@ -7,15 +7,19 @@ import com.raft.ProtoBuf.RaftRPC;
 import io.grpc.stub.StreamObserver;
 import org.slf4j.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RaftNodeService.class);
     private final RaftServer receiver;
     public RaftNodeService(RaftServer raftServer) {this.receiver = raftServer;} // Constructor
 
-    // Voting
+    // Leader Election
     @Override
-    public void requestVoteRPC(RaftRPC.VoteRequest candidateRequest, StreamObserver<RaftRPC.VoteReply> responseObserver) {
+    public void requestVoteRPC(RaftRPC.VoteRequest candidateRequest, StreamObserver<RaftRPC.VoteReply> responseObserver)
+    {
         // lock
         receiver.getLock().lock();
         try {
@@ -71,6 +75,125 @@ public class RaftNodeService extends RaftNodeServiceGrpc.RaftNodeServiceImplBase
             responseObserver.onNext(responseBuilder.build());
             responseObserver.onCompleted();
         } finally {
+            receiver.getLock().unlock();
+        }
+    }
+
+    @Override
+    public void appendEntriesRPC(RaftRPC.AppendEntriesRequest request, StreamObserver<RaftRPC.AppendEntriesReply> responseObserver)
+    {
+        receiver.getLock().lock();
+        try {
+            RaftRPC.AppendEntriesReply.Builder responseBuilder = RaftRPC.AppendEntriesReply.newBuilder();
+            long leaderTerm = request.getLeaderTerm();
+            long receiverTerm = receiver.getCurrentTerm();
+            long receiverId = receiver.getServerId();
+            NodeRole receiverRole = receiver.getNodeRole();
+            boolean isHeartbeat = request.getLogEntriesCount() == 0;
+            long leaderPrevLogIndex = request.getPrevLogIndex();
+            long receiverLastLogIndex = receiver.getStateMachine().getLastLogIndex();
+
+            // Leader with smaller term is forced to step down
+            if(leaderTerm < receiverTerm)
+            {
+                LOGGER.info("[{}] AppendEntries(Heartbeat)-[SafetyCheck-StepDown] >>> Server (ServerId={}, ServerTerm={}) has greater term than leader's ({})",
+                        receiverRole.toString(),
+                        receiverId,
+                        receiverTerm,
+                        leaderTerm);
+                responseBuilder
+                        .setCurrentTerm(receiverTerm)
+                        .setSuccess(false)
+                        .build();
+                responseObserver.onNext(responseBuilder.build());
+                responseObserver.onCompleted();
+                return;
+            }
+            // Step down if receiver is either candidate or leader
+            else
+            {
+                if(receiverRole == NodeRole.CANDIDATE)
+                {
+                    if(isHeartbeat)
+                    {
+                        LOGGER.info("[{}] AppendEntries(Heartbeat)-[SafetyCheck-StepDown] >>> Server (ServerId={}, ServerTerm={}) stepping down ... since a new leader has arisen",
+                                receiverRole,
+                                receiverId,
+                                receiverTerm);
+                    }
+                    else
+                    {
+                        LOGGER.info("[{}] AppendEntries-[SafetyCheck-StepDown] >>> Server (ServerId={}, ServerTerm={}) stepping down ... since a new leader has arisen",
+                                receiverRole,
+                                receiverId,
+                                receiverTerm);
+                    }
+                }
+                else
+                {
+                    if(isHeartbeat)
+                    {
+                        LOGGER.info("[{}] AppendEntries(Heartbeat)-[SafetyCheck-Update] >>> Server (ServerId={}, ServerTerm={}) update its raft information ...",
+                                receiverRole.toString(),
+                                receiverId,
+                                receiverTerm);
+                    }
+                    else
+                    {
+                        LOGGER.info("[{}] AppendEntries-[SafetyCheck-Update] >>> Server (ServerId={}, ServerTerm={}) update its raft information ...",
+                                receiverRole.toString(),
+                                receiverId,
+                                receiverTerm);
+                    }
+                }
+                receiver.stepDown(leaderTerm);
+            }
+            receiver.setLeaderId(request.getLeaderId());
+            if(leaderPrevLogIndex > receiverLastLogIndex)
+            {
+                LOGGER.info("[{}] AppendEntries-[Rejection] >>> Follower (ServerId={}, ServerTerm={}) 's log does not match with leader's ...",
+                        receiverRole,
+                        receiverId,
+                        receiverTerm);
+                responseBuilder
+                        .setCurrentTerm(receiverTerm)
+                        .setSuccess(false)
+                        .build();
+                responseObserver.onNext(responseBuilder.build());
+                responseObserver.onCompleted();
+                return;
+            }
+            // Heartbeat
+            if(isHeartbeat)
+            {
+                LOGGER.info("[{}] AppendEntriesRPC-[Heartbeat] >>> Server (ServerId={}, ServerTerm={}) has received heartbeat. The latest entry's (Index={}, Term={}) command is <{}> ",
+                        receiverRole.toString(),
+                        receiverId,
+                        receiverTerm,
+                        receiver.getStateMachine().getLastLog().getCommand(),
+                        receiver.getStateMachine().getLastLogIndex(),
+                        receiver.getStateMachine().getLastLogTerm());
+            }
+            // AppendEntries, added into local LogContainer (stored in the in-memory for simplicity)
+            else
+            {
+                List<RaftRPC.LogEntry> logEntriesFromRequest = request.getLogEntriesList();
+                receiver.getStateMachine().getLogContainer().addAll(logEntriesFromRequest);
+                LOGGER.info("[{}] AppendEntriesRPC [Appended] >>> Server (ServerId={}, ServerTerm={}) has added entries provided. The latest entry's (Index={}, Term={}) command is <{}> ",
+                        receiverRole.toString(),
+                        receiverId,
+                        receiverTerm,
+                        receiver.getStateMachine().getLastLog().getCommand(),
+                        receiver.getStateMachine().getLastLogIndex(),
+                        receiver.getStateMachine().getLastLogTerm());
+            }
+            responseBuilder
+                    .setCurrentTerm(receiverTerm)
+                    .setSuccess(true)
+                    .build();
+            responseObserver.onNext(responseBuilder.build());
+            responseObserver.onCompleted();
+        }finally {
             receiver.getLock().unlock();
         }
     }

@@ -11,24 +11,31 @@ public class StateMachine {
 
     private List<RaftRPC.LogEntry> logContainer = new ArrayList<>();
 
-    public List<RaftRPC.LogEntry> getLogContainer() {
+    public List<RaftRPC.LogEntry> getLogContainer()
+    {
         return logContainer;
     }
 
-    public void setLogContainer(List<RaftRPC.LogEntry> logContainer) {
+    public void setLogContainer(List<RaftRPC.LogEntry> logContainer)
+    {
         this.logContainer = logContainer;
     }
 
     public void appendLogEntry(RaftRPC.LogEntry logEntry)
     {
-        logContainer.add(logEntry);
+        this.logContainer.add(logEntry);
+    }
+
+    public RaftRPC.LogEntry getLastLog()
+    {
+        return logContainer.get(logContainer.size() - 1);
     }
 
     public long getLastLogIndex()
     {
         if (!logContainer.isEmpty())
         {
-            return logContainer.get(logContainer.size() - 1).getIndex();
+            return getLastLog().getIndex();
         }
         return 0;
     }
@@ -37,8 +44,17 @@ public class StateMachine {
     {
         if (!logContainer.isEmpty())
         {
-            return logContainer.get(logContainer.size() - 1).getTerm();
+            return getLastLog().getTerm();
         }
         return 0;
+    }
+
+    public long getLogEntryTermByIndex(long entryIndex)
+    {
+        if(entryIndex == 0L || logContainer.isEmpty())
+        {
+            return 0L;
+        }
+        return logContainer.get((int) entryIndex).getTerm();
     }
 }

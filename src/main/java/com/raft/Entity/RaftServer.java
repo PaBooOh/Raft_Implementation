@@ -23,12 +23,13 @@ public class RaftServer {
     private final RaftRPC.Cluster cluster;
 
     private ExecutorService executorService;
-    private ScheduledExecutorService scheduledExecutorService;
-    private ScheduledFuture electionScheduledFuture;
+    private ScheduledExecutorService scheduledExecutorService; // RPC task that needs to send RPCs to other nodes in parallel
+    private ScheduledFuture electionScheduledFuture; // Timer task
+    private ScheduledFuture heartbeatScheduledFuture; // Timer task
     private ConcurrentMap<Integer, RaftRPC.Server> serverMap = new ConcurrentHashMap<>();
-
+    // Key: serverId (i.e followerId), Value: lastLogIndex(leader sent a log to this follower previously)
+    private ConcurrentMap<Integer, Long> logMatchMap = new ConcurrentHashMap<>();
     private StateMachine stateMachine;
-
     private int leaderId;
     private int serverId;
     private int votedCount;
@@ -48,6 +49,7 @@ public class RaftServer {
         for (RaftRPC.Server server : cluster) {
             clusterBuilder.addServers(server);
             this.serverMap.put(server.getServerId(), server);
+            this.logMatchMap.put(server.getServerId(), 0L);
         }
         this.cluster = clusterBuilder.build();
         this.localServer = localServer;
@@ -57,6 +59,8 @@ public class RaftServer {
         this.leaderId = 0;
         this.votedFor = 0;
         this.currentTerm = 0;
+        this.commitIndex = 0;
+        this.lastAppliedIndex = 0;
     }
 
     public void buildRaftServer()
@@ -69,29 +73,33 @@ public class RaftServer {
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>());
         scheduledExecutorService = Executors.newScheduledThreadPool(2);
-        initiateLeaderElection(); // start leader election
+        startElectionTimeout(); // start timeout, if not receive heartbeatRPC in timeout ms, then starts leader election
+    }
+
+    // Timer, counting down... Will start election unless it receives heartbeat
+    private void startElectionTimeout()
+    {
+        // interrupt thread
+        if (electionScheduledFuture != null && !electionScheduledFuture.isDone())
+        {
+            electionScheduledFuture.cancel(true);
+        }
+        electionScheduledFuture = scheduledExecutorService.schedule(this::requestVoteFromOtherServers, getElectionTimeoutMs(), TimeUnit.MILLISECONDS);
     }
 
     // Multi-threads is applied to issue multiple requestVote RPCs to other raft nodes.
-    private void initiateLeaderElection()
-    {
-        // interrupt thread
-        if (electionScheduledFuture != null && !electionScheduledFuture.isDone()) {
-            electionScheduledFuture.cancel(true);
-        }
-        electionScheduledFuture = scheduledExecutorService.schedule(this::requestVote, getElectionTimeoutMs(), TimeUnit.MILLISECONDS);
-    }
-
-    //
-    private void requestVote()
+    private void requestVoteFromOtherServers()
     {
         lock.lock();
         try {
             setCurrentTerm(getCurrentTerm() + 1);
-            LOGGER.info("Leader Election >>> Server (ServerId={}, ServerTerm={}) become candidate and try to canvass ...", localServer.getServerId(), getCurrentTerm());
             setNodeRole(NodeRole.CANDIDATE);
             setLeaderId(0);
             setVotedFor(localServer.getServerId()); // vote for itself
+            LOGGER.info("[{}] Leader Election >>> Server (ServerId={}, ServerTerm={}) become candidate and try to canvass from other servers",
+                    getNodeRole().toString(),
+                    localServer.getServerId(),
+                    getCurrentTerm());
         } finally {
             lock.unlock();
         }
@@ -110,7 +118,8 @@ public class RaftServer {
 
     private void issueRequestVoteRPC(int targetServerId, String targetServerHost, int targetServerPort)
     {
-        LOGGER.info("Leader Election >>> Candidate (ServerId={}, ServerHost={}, ServerPort={}) is trying issuing RequestVoteRPC to a server (ServerId={}, ServerHost={}, ServerPort={})",
+        LOGGER.info("[{}] Leader Election >>> Candidate (ServerId={}, ServerHost={}, ServerPort={}) issued RequestVoteRPC to a server (ServerId={}, ServerHost={}, ServerPort={})",
+                getNodeRole().toString(),
                 localServer.getServerId(),
                 localServer.getHost(),
                 localServer.getPort(),
@@ -138,7 +147,8 @@ public class RaftServer {
             // Candidate steps down whenever this happens.
             if (candidateTerm < receiverTerm)
             {
-                LOGGER.info("Leader Election >>> Candidate (ServerId={}, ServerTerm={}) steps down ... because of receiver (ServerId={}, ServerTerm={}) with greater term",
+                LOGGER.info("[{}] Leader Election-[SafetyCheck-StepDown]>>> Server (ServerId={}, ServerTerm={}) steps down ... because of receiver (ServerId={}, ServerTerm={}) with greater term.",
+                        getNodeRole().toString(),
                         localServer.getServerId(),
                         candidateTerm,
                         targetServerId,
@@ -150,26 +160,31 @@ public class RaftServer {
                 if(receiverVoteGranted)
                 {
                     setVotedCount(getVotedCount() + 1);
-                    LOGGER.info("Leader Election [Granted] >>> Candidate (ServerId={}, ServerTerm={}) get vote granted from receiver (ServerId={}, ServerTerm={}). Current votedCount={}",
+                    LOGGER.info("[{}] Leader Election-[Granted] >>> Server (ServerId={}, ServerTerm={}) got vote granted from receiver (ServerId={}, ServerTerm={}). Current votedCount={}.",
+                            getNodeRole().toString(),
                             localServer.getServerId(),
                             candidateTerm,
                             targetServerId,
                             receiverTerm, getVotedCount());
                     if(getVotedCount() > cluster.getServersCount()/2)
                     {
-                        LOGGER.info("Leader Election [Win] >>> Candidate (ServerId={}, ServerTerm={}) gets votes from majority and transitions to leader state!!!",
+                        LOGGER.info("[{}] Leader Election-[Elected] >>> Server (ServerId={}, ServerTerm={}) got votes from majority and is about to transitions to leader state.",
+                                getNodeRole().toString(),
                                 localServer.getServerId(),
                                 candidateTerm);
                         setNodeRole(NodeRole.LEADER);
                         setLeaderId(localServer.getServerId());
+                        // No need to request vote because have received the majority of servers, i.e., already become leader
                         if (electionScheduledFuture != null && !electionScheduledFuture.isDone()) {
                             electionScheduledFuture.cancel(true);
                         }
+                        sendHeartbeatToOtherServers(); // Leader starts normal operation
                     }
                 }
                 else
                 {
-                    LOGGER.info("Leader Election [Denied] >>> Candidate (ServerId={}, ServerTerm={}) get vote denied from receiver (ServerId={}, ServerTerm={}). Current votedCount={}",
+                    LOGGER.info("[{}] Leader Election-[Denied] >>> Server (ServerId={}, ServerTerm={}) got vote denied from receiver (ServerId={}, ServerTerm={}). Current votedCount={}.",
+                            getNodeRole().toString(),
                             localServer.getServerId(),
                             candidateTerm,
                             targetServerId,
@@ -181,25 +196,104 @@ public class RaftServer {
         }
     }
 
+    // Only for leader
+    private void sendHeartbeatToOtherServers()
+    {
+        // It is the first time that the new leader issue heartbeatRPCs (appendEntriesRPC with empty entry) to its followers
+        for (RaftRPC.Server server: cluster.getServersList())
+        {
+            int targetServerId = server.getServerId();
+            String targetServerHost = server.getHost();
+            int targetServerPort = server.getPort();
+
+            if(targetServerId == localServer.getServerId())
+                continue;
+            executorService.submit(() -> {
+                issueAppendEntriesRPC(targetServerId, targetServerHost, targetServerPort);});
+        }
+
+        // reissue heartbeatRPCs
+        if (heartbeatScheduledFuture != null && !heartbeatScheduledFuture.isDone())
+        {
+            heartbeatScheduledFuture.cancel(true);
+        }
+        heartbeatScheduledFuture = scheduledExecutorService.schedule(this::sendHeartbeatToOtherServers, raftConfiguration.getHeartbeatInterval(), TimeUnit.MILLISECONDS);
+    }
+
+    // Except for leader, i.e., only for followers
     private long getElectionTimeoutMs()
     {
-//        ThreadLocalRandom random = ThreadLocalRandom.current();
-//        int randomElectionTimeout = raftConfiguration.getElectionTimeout()
-//                + random.nextInt(0, raftConfiguration.getElectionTimeout());
         Random random = new Random();
         int minElectionTimeout = raftConfiguration.getElectionTimeout();
-        int randomElectionTimeout = random.nextInt(minElectionTimeout+1) + minElectionTimeout;
-        LOGGER.info("Server Timeout {} >> Server (ServerId={}, ServerTerm={}) starts timeout Timer ...",
+        int randomElectionTimeout = random.nextInt(2*minElectionTimeout+1) + minElectionTimeout;
+        LOGGER.info("Server timeout in {} ms >>> Server (ServerId={}, ServerTerm={}) will initiate election if not receive heartbeat",
                 randomElectionTimeout,
                 localServer.getServerId(),
                 getCurrentTerm());
         return randomElectionTimeout;
     }
 
-//    private RaftRPC.AppendEntriesReply appendEntriesRequest(RaftRPC.AppendEntriesRequest)
-//    {
-//
-//    }
+    private void issueAppendEntriesRPC(int targetServerId, String targetServerHost, int targetServerPort)
+    {
+        lock.lock();
+        try {
+            long prevLogIndex = logMatchMap.get(targetServerId);
+            long prevLogTerm = getStateMachine().getLogEntryTermByIndex(prevLogIndex);
+            RaftRPC.AppendEntriesRequest request = RaftRPC.AppendEntriesRequest.newBuilder()
+                    .setLeaderId(localServer.getServerId())
+                    .setLeaderTerm(getCurrentTerm())
+                    .setPrevLogIndex(prevLogIndex)
+                    .setPrevLogTerm(prevLogTerm)
+                    .setLeaderCommit(commitIndex)
+                    .build();
+            ManagedChannel channel = ManagedChannelBuilder.forAddress(targetServerHost, targetServerPort)
+                    .usePlaintext()
+                    .build();
+            RaftNodeServiceGrpc.RaftNodeServiceBlockingStub blockingStub = RaftNodeServiceGrpc.newBlockingStub(channel);
+            RaftRPC.AppendEntriesReply reply = blockingStub.appendEntriesRPC(request);
+            LOGGER.info("[{}] Normal operation-[Send heartbeat] >>> Server (ServerId={}, ServerTerm={}) issued HeartbeatRPCs to its followers ...",
+                    getNodeRole().toString(),
+                    localServer.getServerId(),
+                    getCurrentTerm());
+            long receiverTerm = reply.getCurrentTerm();
+            long leaderTerm = getCurrentTerm();
+            boolean logMatchSafety = reply.getSuccess();
+
+            // Check valid: leader maintain its position
+            if(leaderTerm >= receiverTerm)
+            {
+                // Append successfully
+                if(logMatchSafety)
+                {
+                    // 1 below stands for the size of entries[] (but here is a simple implementation that only appends one entry)
+                    LOGGER.info("[{}] Normal operation-[Send heartbeat] >>> Leader (ServerId={}, ServerTerm={}) has appended an entry to a follower (ServerId={}, ServerTerm={})",
+                            getNodeRole().toString(),
+                            localServer.getServerId(),
+                            leaderTerm,
+                            targetServerId,
+                            receiverTerm);
+                    logMatchMap.put(targetServerId, logMatchMap.get(targetServerId) + 1);
+                }
+                // Append unsuccessfully (Log Dis-matching)
+                else
+                {
+                    LOGGER.debug("[{}] Normal operation-[Send heartbeat] >>> Leader (ServerId={}, ServerTerm={})'s Log does not match with that of a follower (ServerId={}, ServerTerm={})",
+                            getNodeRole().toString(),
+                            localServer.getServerId(),
+                            leaderTerm,
+                            targetServerId,
+                            receiverTerm);
+                }
+            }
+            // Step down
+            else
+            {
+                stepDown(receiverTerm);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
 
     public StateMachine getStateMachine() {
         return stateMachine;
@@ -207,18 +301,19 @@ public class RaftServer {
 
     public void stepDown(long newTerm)
     {
-        LOGGER.info("Step down >>> Candidate/Leader (ServerId={}, ServerTerm={}) starts stepping down ... since receive a RPC returning greater term than itself",
-                localServer.getServerId(),
-                getCurrentTerm());
+//        LOGGER.info("Step down >>> Candidate/Leader (ServerId={}, ServerTerm={}) starts stepping down ... since receive a RPC returning greater term than itself",
+//                localServer.getServerId(),
+//                getCurrentTerm());
+        setNodeRole(NodeRole.FOLLOWER); // Step down
         setCurrentTerm(newTerm);
         setLeaderId(0);
         setVotedFor(0);
-        setNodeRole(NodeRole.FOLLOWER); // Step down
-        // stop heartbeat
-//        if (heartbeatScheduledFuture != null && !heartbeatScheduledFuture.isDone()) {
-//            heartbeatScheduledFuture.cancel(true);
-//        }
-        initiateLeaderElection();
+        // If the server that just stepped down is the leader, then stop sending heartbeat RPCs
+        if (heartbeatScheduledFuture != null && !heartbeatScheduledFuture.isDone()) {
+            heartbeatScheduledFuture.cancel(true);
+        }
+        // Follower have to use a random timer
+        startElectionTimeout();
     }
 
 
@@ -274,5 +369,9 @@ public class RaftServer {
 
     public void setServerId(int serverId) {
         this.serverId = serverId;
+    }
+
+    public long getCommitIndex() {
+        return commitIndex;
     }
 }
