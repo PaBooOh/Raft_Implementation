@@ -35,13 +35,17 @@ We implemented the crucial parts of Raft (not fully). They are leader election, 
 
 1. Use __git clone__ command that clones our project to local file
 2. (Recommended) run raft.sh to observe leader election
-2. (Not recommended) Deploy, say three, RaftServers in three separate cloud nodes by using the command below
+
+(Not recommended) or ... manually deploy, say three, RaftServers in three separate cloud nodes by using the command below
 > mvn compile exec:java -Dexec.mainClass="com.raft.Main.ServerTest" -Dexec.args="CLUSTER LOCALSERVER"   
 
 For example:
 > mvn compile exec:java -Dexec.mainClass="com.raft.Main.ServerTest" -Dexec.args="node102:1234,node103:1234,node105:1234 node102:1234"
 > mvn compile exec:java -Dexec.mainClass="com.raft.Main.ServerTest" -Dexec.args="node102:1234,node103:1234,node105:1234 node103:1234"
 > mvn compile exec:java -Dexec.mainClass="com.raft.Main.ServerTest" -Dexec.args="node102:1234,node103:1234,node105:1234 node105:1234"
+
+where node102:1234,node103:1234,node105:1234 represents raft cluster, and node102:1234 is the current (local) node you are in. Note that
+the local node(LOCALSERVER) must be part of this cluster.
 
 3. In another cloud node, use the command below to simulate client and send a request (we set it in string format for simplicity) to cluster:
 >  mvn compile exec:java -Dexec.mainClass="com.raft.Main.ClientTest" -Dexec.args="node102:2144,node103:2144,node105:2144 hello"
